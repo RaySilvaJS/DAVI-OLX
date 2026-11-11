@@ -14,7 +14,38 @@ const pino = require("pino");
 // const fs = require("fs");
 
 const config = require("./config.json");
-const destinatario = config.groupDestino;
+let destinatario = null;
+
+async function resolverDestinatarioGrupo(valor) {
+  if (typeof valor !== "string" || !valor.trim()) {
+    throw new Error("groupDestino não está configurado.");
+  }
+
+  const destino = valor.trim();
+  if (destino.endsWith("@g.us")) return destino;
+
+  let link;
+  try {
+    link = new URL(destino);
+  } catch {
+    throw new Error("groupDestino deve ser um ID de grupo ou link de convite.");
+  }
+
+  if (
+    link.hostname !== "chat.whatsapp.com" ||
+    !link.pathname.split("/").filter(Boolean)[0]
+  ) {
+    throw new Error("O link groupDestino não é um convite válido do WhatsApp.");
+  }
+
+  const codigoConvite = link.pathname.split("/").filter(Boolean)[0];
+  const grupo = await conn.groupGetInviteInfo(codigoConvite);
+  if (!grupo.id?.endsWith("@g.us")) {
+    throw new Error("Não foi possível obter o ID do grupo pelo link informado.");
+  }
+
+  return grupo.id;
+}
 
 async function connectToWhatsApp() {
   try {
@@ -72,9 +103,17 @@ async function connectToWhatsApp() {
       if (connection === "open") {
         isConnected = true;
         console.log("Conectado ao WhatsApp");
-        conn.sendMessage(destinatario, {
-          text: "*Conexão estabelecida com sucesso!*",
-        });
+        void (async () => {
+          try {
+            destinatario = await resolverDestinatarioGrupo(config.groupDestino);
+            console.log(`Grupo de destino resolvido: ${destinatario}`);
+            await conn.sendMessage(destinatario, {
+              text: "*Conexão estabelecida com sucesso!*",
+            });
+          } catch (error) {
+            console.error("Erro ao resolver o grupo de destino:", error.message);
+          }
+        })();
 
         // const { exec } = require("child_process");
         // exec(
@@ -235,6 +274,13 @@ async function enviarMensagemWhatsApp(mensagem) {
       }
     }
 
+    if (!destinatario) {
+      return {
+        success: false,
+        message: "O grupo de destino ainda não foi resolvido. Verifique groupDestino.",
+      };
+    }
+
     // ID do grupo ou contato (pode ser alterado conforme necessário)
     console.log(`Tentando enviar mensagem para: ${destinatario}`);
 
@@ -262,6 +308,13 @@ async function enviarArquivoWhatsApp(filePath, caption) {
     if (!isConnected || !conn) {
       console.error("WhatsApp não está conectado. Status:", isConnected);
       return { success: false, message: "WhatsApp não está conectado" };
+    }
+
+    if (!destinatario) {
+      return {
+        success: false,
+        message: "O grupo de destino ainda não foi resolvido. Verifique groupDestino.",
+      };
     }
 
     // ID do grupo ou contato (pode ser alterado conforme necessário)
