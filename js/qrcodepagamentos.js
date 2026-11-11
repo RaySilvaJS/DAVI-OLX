@@ -1,5 +1,5 @@
 const axios = require("axios");
-const puppeteer = require("puppeteer");
+const { chromium } = require("playwright");
 
 /**
  * Acessa a URL de redirecionamento e extrai a imagem do QR code em formato base64
@@ -7,14 +7,14 @@ const puppeteer = require("puppeteer");
  * @returns {Promise<string|null>} Imagem em base64 ou null em caso de erro
  */
 async function acessarImagemBase64(redirectUrl) {
-  const browser = await puppeteer.launch({
+  const browser = await chromium.launch({
     headless: true,
     args: ["--no-sandbox"],
   });
   const page = await browser.newPage();
 
   try {
-    await page.goto(redirectUrl, { waitUntil: "networkidle2", timeout: 30000 });
+    await page.goto(redirectUrl, { waitUntil: "networkidle", timeout: 30000 });
 
     // Captura a imagem base64 do QR code e o título da div
     const result = await page.evaluate(() => {
@@ -27,7 +27,7 @@ async function acessarImagemBase64(redirectUrl) {
 
       return {
         imgBase64: img ? img.src : null,
-        pixTitle: pixTitle.replace(/[\r\n\t]/g, ""),
+        pixTitle: pixTitle ? pixTitle.replace(/[\r\n\t]/g, "") : null,
       };
     });
 

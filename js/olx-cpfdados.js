@@ -164,7 +164,6 @@
 // //   extrairDadosVendedor,
 // // };
 
-// const puppeteer = require("puppeteer");
 // const cheerio = require("cheerio");
 
 // // 🔑 COLE SEU COOKIE AQUI
@@ -241,7 +240,6 @@
 //   let browser;
 
 //   try {
-//     browser = await puppeteer.launch({
 //       headless: true,
 //       args: ["--no-sandbox"],
 //     });
@@ -298,7 +296,7 @@
 //   extrairDadosVendedor,
 // };
 
-const puppeteer = require("puppeteer");
+const { chromium } = require("playwright");
 const cheerio = require("cheerio");
 
 // 🔑 COOKIE
@@ -370,19 +368,19 @@ async function buscarInfoComId(listId) {
   let browser;
 
   try {
-    browser = await puppeteer.launch({
-      headless: false, // 🔥 IMPORTANTE (anti-block)
+    browser = await chromium.launch({
+      headless: true,
       args: ["--no-sandbox"],
     });
 
-    const page = await browser.newPage();
+    const context = await browser.newContext({
+      userAgent:
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
+    });
+    const page = await context.newPage();
 
     // 🧠 Anti-detecção
-    await page.setUserAgent(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
-    );
-
-    await page.evaluateOnNewDocument(() => {
+    await page.addInitScript(() => {
       Object.defineProperty(navigator, "webdriver", {
         get: () => false,
       });
@@ -390,7 +388,7 @@ async function buscarInfoComId(listId) {
 
     console.log("🍪 Injetando cookies...");
     const cookies = parseCookies(COOKIE_STRING);
-    await page.setCookie(...cookies);
+    await context.addCookies(cookies);
 
     console.log("🌐 Acessando página...");
     await page.goto(`https://comprasegura.olx.com.br/?listId=${listId}`, {
@@ -403,6 +401,7 @@ async function buscarInfoComId(listId) {
       () => {
         return document.body.innerText.includes("Vendedor:");
       },
+      undefined,
       { timeout: 15000 },
     );
 

@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+const { chromium } = require("playwright");
 
 const USER_AGENTS = [
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
@@ -77,34 +77,35 @@ async function extrairDadosProdutoOLX(url) {
     console.log(`Usando proxy OLX: ${configProxy.servidor}`);
   }
 
-  const browser = await puppeteer.launch({
-    headless: false,
+  const browser = await chromium.launch({
+    headless: true,
     args: launchArgs,
+    proxy: configProxy?.servidor
+      ? {
+          server: configProxy.servidor,
+          ...(configProxy.auth || {}),
+        }
+      : undefined,
   });
 
   try {
     let ultimoResultado = null;
 
     for (let tentativa = 0; tentativa < 3; tentativa++) {
-      const page = await browser.newPage();
-
-      if (configProxy?.auth) {
-        await page.authenticate(configProxy.auth);
-      }
-
-      await page.setViewport({ width: 1366, height: 768 });
+      const page = await browser.newPage({
+        viewport: { width: 1366, height: 768 },
+        userAgent: USER_AGENTS[tentativa % USER_AGENTS.length],
+      });
       await page.setExtraHTTPHeaders({
         "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
       });
-      await page.setUserAgent(USER_AGENTS[tentativa % USER_AGENTS.length]);
-
-      await page.evaluateOnNewDocument(() => {
+      await page.addInitScript(() => {
         Object.defineProperty(navigator, "webdriver", {
           get: () => false,
         });
       });
 
-      await page.goto(url, { waitUntil: "networkidle2", timeout: 30000 });
+      await page.goto(url, { waitUntil: "networkidle", timeout: 30000 });
 
       await fecharConsentimentoCookies(page);
 
@@ -125,6 +126,7 @@ async function extrairDadosProdutoOLX(url) {
             const preco = document.querySelector("#price-box-container");
             return h1?.innerText?.trim() && preco?.innerText?.includes("R$");
           },
+          undefined,
           { timeout: 10000 }
         )
         .catch(() => {
