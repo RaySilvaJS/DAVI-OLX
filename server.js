@@ -185,15 +185,25 @@ function resolverMetodoConexao(timeoutMs = 120000) {
 
 async function connectToWhatsApp() {
   try {
+    // Pasta da sessão do WhatsApp (caminho absoluto, igual ao usado na limpeza).
+    const authDir = path.join(__dirname, "bot", "auth_info_baileys");
+
+    // Já existe uma sessão salva? Nesse caso NÃO perguntamos nada: apenas
+    // reconectamos. O menu só aparece quando não há sessão (primeira conexão
+    // ou após a sessão ter sido invalidada/removida). Verificamos pelo arquivo
+    // creds.json porque o flag state.creds.registered nem sempre é confiável
+    // entre reinícios.
+    const temSessao = fs.existsSync(path.join(authDir, "creds.json"));
+
     // Usar armazenamento de autenticação em múltiplos arquivos
-    const { state, saveCreds } = await useMultiFileAuthState(
-      "./bot/auth_info_baileys"
-    );
+    const { state, saveCreds } = await useMultiFileAuthState(authDir);
 
     // Define o método de conexão (QR ou número) apenas quando não há sessão.
     let metodoConexao = { metodo: "qr" };
-    if (!state.creds.registered) {
+    if (!temSessao && !state.creds.registered) {
       metodoConexao = await resolverMetodoConexao();
+    } else {
+      console.log("Sessão existente encontrada. Reconectando ao WhatsApp...");
     }
     const usarPareamento =
       metodoConexao.metodo === "pair" && !!metodoConexao.numero;
@@ -315,10 +325,7 @@ async function connectToWhatsApp() {
           // para permitir um novo pareamento/QR na próxima tentativa — caso
           // contrário o bot fica preso tentando logar com uma sessão rejeitada.
           try {
-            fs.rmSync(path.join(__dirname, "bot", "auth_info_baileys"), {
-              recursive: true,
-              force: true,
-            });
+            fs.rmSync(authDir, { recursive: true, force: true });
             console.log(
               "Sessão inválida removida. Reiniciando para novo pareamento/QR..."
             );
