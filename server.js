@@ -82,62 +82,105 @@ function obterNumeroPareamentoPreset() {
   return null;
 }
 
-// Faz uma pergunta no terminal e devolve a resposta digitada.
-function perguntarTerminal(pergunta) {
+// Decide como conectar quando ainda não há sessão: QR Code ou número de
+// telefone. Prioriza um número já informado (CLI/env/config); caso contrário,
+// pergunta no terminal. Em ambiente sem entrada (stdin fechado / sem teclado)
+// ou após o tempo limite, cai para o QR Code — sem travar o processo.
+//
+// Usa uma ÚNICA interface readline para todo o diálogo: criar uma nova a cada
+// pergunta faria o Node consumir (read-ahead) as linhas seguintes do stdin
+// quando a entrada é um pipe (ex.: Git Bash / npm start no Windows), perdendo
+// a resposta do número.
+function resolverMetodoConexao(timeoutMs = 120000) {
+  if (metodoConexaoCache) return Promise.resolve(metodoConexaoCache);
+
+  const numeroPreset = obterNumeroPareamentoPreset();
+  if (numeroPreset) {
+    metodoConexaoCache = { metodo: "pair", numero: numeroPreset };
+    return Promise.resolve(metodoConexaoCache);
+  }
+
   const readline = require("readline");
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
+
   return new Promise((resolve) => {
-    rl.question(pergunta, (resposta) => {
+    let encerrado = false;
+    let fechado = false;
+    const linhas = []; // linhas recebidas ainda não consumidas
+    let aguardando = null; // resolve() da pergunta em aberto
+
+    // Entrega uma linha à pergunta pendente; se o stdin fechou (EOF), responde
+    // null para não travar. Enfileirar as linhas evita perder a 2ª resposta
+    // quando a entrada vem em bloco (pipe), onde o readline faz read-ahead.
+    const entregar = () => {
+      if (!aguardando) return;
+      if (linhas.length) {
+        const fn = aguardando;
+        aguardando = null;
+        fn(linhas.shift());
+      } else if (fechado) {
+        const fn = aguardando;
+        aguardando = null;
+        fn(null);
+      }
+    };
+
+    const finalizar = (resultado) => {
+      if (encerrado) return;
+      encerrado = true;
+      clearTimeout(timer);
       rl.close();
-      resolve((resposta || "").trim());
+      metodoConexaoCache = resultado;
+      resolve(resultado);
+    };
+
+    // Sem terminal interativo o stdin emite "close" (EOF) → QR Code.
+    const timer = setTimeout(() => finalizar({ metodo: "qr" }), timeoutMs);
+    rl.on("line", (l) => {
+      linhas.push((l || "").trim());
+      entregar();
     });
+    rl.once("close", () => {
+      fechado = true;
+      entregar();
+      finalizar({ metodo: "qr" });
+    });
+
+    const pergunta = (texto) => {
+      if (texto) process.stdout.write(texto);
+      return new Promise((res) => {
+        aguardando = (v) => res(v == null ? null : String(v).trim());
+        entregar();
+      });
+    };
+
+    (async () => {
+      console.log("\n==============================================");
+      console.log(" Como deseja conectar o WhatsApp?");
+      console.log("   1) QR Code (padrão)");
+      console.log("   2) Número de telefone (código de pareamento)");
+      console.log("==============================================");
+      const escolha = await pergunta("Opção [1/2]: ");
+      if (encerrado) return;
+
+      if (escolha === "2") {
+        const sugestao = normalizarNumeroPareamento(config.numerodobot);
+        const texto = sugestao
+          ? `Número com DDI+DDD (ex.: ${sugestao}) [Enter usa ${sugestao}]: `
+          : "Número com DDI+DDD (ex.: 5521964562756): ";
+        let numero = normalizarNumeroPareamento(await pergunta(texto));
+        if (encerrado) return;
+        if (!numero) numero = sugestao;
+        if (numero) return finalizar({ metodo: "pair", numero });
+        console.log("Número inválido. Usando QR Code.");
+      }
+
+      finalizar({ metodo: "qr" });
+    })();
   });
-}
-
-// Decide como conectar quando ainda não há sessão: QR Code ou número de
-// telefone. Prioriza um número já informado (CLI/env/config); caso contrário,
-// pergunta no terminal (se interativo); sem terminal, cai para QR Code.
-async function resolverMetodoConexao() {
-  if (metodoConexaoCache) return metodoConexaoCache;
-
-  const numeroPreset = obterNumeroPareamentoPreset();
-  if (numeroPreset) {
-    metodoConexaoCache = { metodo: "pair", numero: numeroPreset };
-    return metodoConexaoCache;
-  }
-
-  if (!process.stdin.isTTY) {
-    // Sem terminal interativo: mantém o comportamento padrão (QR Code).
-    metodoConexaoCache = { metodo: "qr" };
-    return metodoConexaoCache;
-  }
-
-  console.log("\n==============================================");
-  console.log(" Como deseja conectar o WhatsApp?");
-  console.log("   1) QR Code (padrão)");
-  console.log("   2) Número de telefone (código de pareamento)");
-  console.log("==============================================");
-  const escolha = await perguntarTerminal("Opção [1/2]: ");
-
-  if (escolha === "2") {
-    const sugestao = normalizarNumeroPareamento(config.numerodobot);
-    const texto = sugestao
-      ? `Número com DDI+DDD (ex.: ${sugestao}) [Enter usa ${sugestao}]: `
-      : "Número com DDI+DDD (ex.: 5521964562756): ";
-    let numero = normalizarNumeroPareamento(await perguntarTerminal(texto));
-    if (!numero) numero = sugestao;
-    if (numero) {
-      metodoConexaoCache = { metodo: "pair", numero };
-      return metodoConexaoCache;
-    }
-    console.log("Número inválido. Usando QR Code.");
-  }
-
-  metodoConexaoCache = { metodo: "qr" };
-  return metodoConexaoCache;
 }
 
 async function connectToWhatsApp() {
@@ -257,21 +300,41 @@ async function connectToWhatsApp() {
       // Se desconectado
       if (connection === "close") {
         isConnected = false;
-        const shouldReconnect =
-          lastDisconnect?.error?.output?.statusCode !==
-          DisconnectReason.loggedOut;
+        const statusCode = lastDisconnect?.error?.output?.statusCode;
+        const loggedOut = statusCode === DisconnectReason.loggedOut; // 401
 
         console.log(
-          "Conexão fechada devido a ",
-          lastDisconnect?.error,
-          ", reconectando: ",
-          shouldReconnect
+          "Conexão fechada. status:",
+          statusCode,
+          "-",
+          lastDisconnect?.error?.message || lastDisconnect?.error
         );
 
-        // Reconectar se não estiver deslogado
-        if (shouldReconnect) {
-          connectToWhatsApp();
+        if (loggedOut) {
+          // Credenciais inválidas/expiradas (ex.: 401). Remove a sessão salva
+          // para permitir um novo pareamento/QR na próxima tentativa — caso
+          // contrário o bot fica preso tentando logar com uma sessão rejeitada.
+          try {
+            fs.rmSync(path.join(__dirname, "bot", "auth_info_baileys"), {
+              recursive: true,
+              force: true,
+            });
+            console.log(
+              "Sessão inválida removida. Reiniciando para novo pareamento/QR..."
+            );
+          } catch (e) {
+            console.error("Falha ao limpar a sessão:", e.message);
+          }
+          // Permite escolher o método novamente e re-solicitar o código.
+          metodoConexaoCache = null;
         }
+
+        // Reconecta (com sessão limpa quando foi deslogado) após breve espera.
+        setTimeout(() => {
+          connectToWhatsApp().catch((e) =>
+            console.error("Falha ao reconectar:", e?.message || e)
+          );
+        }, 3000);
       }
     });
   } catch (error) {
