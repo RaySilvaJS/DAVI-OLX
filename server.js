@@ -47,12 +47,114 @@ async function resolverDestinatarioGrupo(valor) {
   return grupo.id;
 }
 
+// ---- Conexão por QR Code ou por número de telefone (pairing code) ----
+
+// Mantém a escolha do método entre reconexões para não perguntar de novo.
+let metodoConexaoCache = null;
+
+// Normaliza um número para o formato exigido pelo pareamento: apenas dígitos,
+// com código do país e DDD (ex.: 5521964562756). Remove "+", espaços e o
+// sufixo "@s.whatsapp.net" caso venha de uma configuração existente.
+function normalizarNumeroPareamento(valor) {
+  if (!valor) return null;
+  const digitos = String(valor).split("@")[0].replace(/\D/g, "");
+  return digitos.length >= 10 ? digitos : null;
+}
+
+// Procura um número de pareamento informado por linha de comando, variável de
+// ambiente ou configuração. Retorna null quando nada foi informado.
+function obterNumeroPareamentoPreset() {
+  const argv = process.argv.slice(2);
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    const comIgual = arg.match(/^--(?:pair|numero|number)=(.+)$/);
+    if (comIgual) return normalizarNumeroPareamento(comIgual[1]);
+    if (["--pair", "--numero", "--number"].includes(arg)) {
+      return normalizarNumeroPareamento(argv[i + 1]);
+    }
+  }
+  const env =
+    process.env.PAIR_NUMBER ||
+    process.env.NUMERO_PAREAMENTO ||
+    process.env.WHATSAPP_NUMBER;
+  if (env) return normalizarNumeroPareamento(env);
+  if (config.pairNumber) return normalizarNumeroPareamento(config.pairNumber);
+  return null;
+}
+
+// Faz uma pergunta no terminal e devolve a resposta digitada.
+function perguntarTerminal(pergunta) {
+  const readline = require("readline");
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  return new Promise((resolve) => {
+    rl.question(pergunta, (resposta) => {
+      rl.close();
+      resolve((resposta || "").trim());
+    });
+  });
+}
+
+// Decide como conectar quando ainda não há sessão: QR Code ou número de
+// telefone. Prioriza um número já informado (CLI/env/config); caso contrário,
+// pergunta no terminal (se interativo); sem terminal, cai para QR Code.
+async function resolverMetodoConexao() {
+  if (metodoConexaoCache) return metodoConexaoCache;
+
+  const numeroPreset = obterNumeroPareamentoPreset();
+  if (numeroPreset) {
+    metodoConexaoCache = { metodo: "pair", numero: numeroPreset };
+    return metodoConexaoCache;
+  }
+
+  if (!process.stdin.isTTY) {
+    // Sem terminal interativo: mantém o comportamento padrão (QR Code).
+    metodoConexaoCache = { metodo: "qr" };
+    return metodoConexaoCache;
+  }
+
+  console.log("\n==============================================");
+  console.log(" Como deseja conectar o WhatsApp?");
+  console.log("   1) QR Code (padrão)");
+  console.log("   2) Número de telefone (código de pareamento)");
+  console.log("==============================================");
+  const escolha = await perguntarTerminal("Opção [1/2]: ");
+
+  if (escolha === "2") {
+    const sugestao = normalizarNumeroPareamento(config.numerodobot);
+    const texto = sugestao
+      ? `Número com DDI+DDD (ex.: ${sugestao}) [Enter usa ${sugestao}]: `
+      : "Número com DDI+DDD (ex.: 5521964562756): ";
+    let numero = normalizarNumeroPareamento(await perguntarTerminal(texto));
+    if (!numero) numero = sugestao;
+    if (numero) {
+      metodoConexaoCache = { metodo: "pair", numero };
+      return metodoConexaoCache;
+    }
+    console.log("Número inválido. Usando QR Code.");
+  }
+
+  metodoConexaoCache = { metodo: "qr" };
+  return metodoConexaoCache;
+}
+
 async function connectToWhatsApp() {
   try {
     // Usar armazenamento de autenticação em múltiplos arquivos
     const { state, saveCreds } = await useMultiFileAuthState(
       "./bot/auth_info_baileys"
     );
+
+    // Define o método de conexão (QR ou número) apenas quando não há sessão.
+    let metodoConexao = { metodo: "qr" };
+    if (!state.creds.registered) {
+      metodoConexao = await resolverMetodoConexao();
+    }
+    const usarPareamento =
+      metodoConexao.metodo === "pair" && !!metodoConexao.numero;
+    let codigoPareamentoSolicitado = false;
 
     // Criar socket do WhatsApp
     const { version } = await fetchLatestBaileysVersion();
@@ -62,6 +164,7 @@ async function connectToWhatsApp() {
       auth: state,
       version,
       logger: pino({ level: "silent" }),
+      printQRInTerminal: false,
     });
 
     // Escutar mensagens recebidas (para futuras implementações)
@@ -89,14 +192,44 @@ async function connectToWhatsApp() {
     // Salvar credenciais quando autenticado
     conn.ev.on("creds.update", () => saveCreds());
 
-    conn.ev.on("connection.update", (update) => {
+    conn.ev.on("connection.update", async (update) => {
       const { connection, lastDisconnect, qr } = update;
 
-      // Armazenar QR code para exibi-lo na interface administrativa (se necessário)
+      // O evento "qr" sinaliza que o servidor está pronto para parear. Nesse
+      // momento escolhemos entre mostrar o QR ou solicitar o código de
+      // pareamento por número de telefone.
       if (qr) {
-        // Exibe o QR manualmente
-        const qrcode = require("qrcode-terminal");
-        qrcode.generate(qr, { small: true });
+        if (usarPareamento) {
+          if (!codigoPareamentoSolicitado) {
+            codigoPareamentoSolicitado = true;
+            try {
+              const code = await conn.requestPairingCode(metodoConexao.numero);
+              const formatado = code?.match(/.{1,4}/g)?.join("-") || code;
+              console.log("\n==============================================");
+              console.log(" Pareamento por número de telefone");
+              console.log(` Número:  ${metodoConexao.numero}`);
+              console.log(` Código:  ${formatado}`);
+              console.log(
+                " No celular: WhatsApp > Aparelhos conectados >"
+              );
+              console.log(
+                "   Conectar um aparelho > Conectar com número de telefone"
+              );
+              console.log("==============================================\n");
+            } catch (error) {
+              console.error(
+                "Erro ao solicitar código de pareamento:",
+                error?.message || error
+              );
+              // Permite nova tentativa no próximo evento de QR.
+              codigoPareamentoSolicitado = false;
+            }
+          }
+        } else {
+          // Exibe o QR manualmente
+          const qrcode = require("qrcode-terminal");
+          qrcode.generate(qr, { small: true });
+        }
       }
 
       // Se conectado
