@@ -557,6 +557,11 @@
             <script>
                 // Variável global para armazenar o preço
                 let precoConfig = "0,00"; // Valor padrão caso falhe o carregamento
+
+                // Variável global para armazenar o número do WhatsApp de destino.
+                // O valor real é lido dinamicamente da chave "numero" do config.json
+                // (basta atualizar /numero no JSON que o redirecionamento reflete aqui).
+                let numeroWhatsapp = "5511999999999"; // Fallback caso o config.json falhe
                 
                 // Função para carregar o preço do config.json
                 function carregarPreco() {
@@ -568,6 +573,13 @@
                             return response.json();
                         })
                         .then(config => {
+                            // Ler dinamicamente o número do WhatsApp (chave "numero" do config.json).
+                            // Sanitiza mantendo apenas dígitos: aceita formatos como "+55 (11) 99999-9999".
+                            if (config && config.numero) {
+                                numeroWhatsapp = String(config.numero).replace(/\D/g, '');
+                                console.log('Número do WhatsApp carregado:', numeroWhatsapp);
+                            }
+
                             if (config && config.preco) {
                                 // Formatar o preço para o padrão brasileiro (com vírgula)
                                 precoConfig = config.preco.replace('.', ',');
@@ -829,59 +841,49 @@
                         document.cookie = "pagamentoFeito=true; path=/; max-age=172800"; // 2 dias
                     }
 
-                    // Botão para enviar comprovante
+                    // Botão para enviar comprovante — abre o WhatsApp no número lido do config.json
                     btnEnviarComprovante.addEventListener('click', function () {
                         if (!comprovanteUpload.files.length) {
                             alert('Por favor, selecione um arquivo de comprovante primeiro.');
                             return;
                         }
 
+                        // Captura os dados do arquivo selecionado (nome e tamanho)
                         const file = comprovanteUpload.files[0];
-                        const formData = new FormData();
-                        formData.append('comprovante', file);
-                        formData.append('chavePix', chavePixCompleta || chavePix.textContent);
-                        formData.append('valor', precoConfig); // Usar o preço dinâmico
+                        const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
 
-                        // Mostrar overlay de carregamento
-                        loadingOverlay.style.display = 'flex';
+                        // Salva status de pagamento
+                        setPagamentoFeito();
 
-                        // Enviar o arquivo para o servidor
-                        fetch('/api/enviar-comprovante', {
-                            method: 'POST',
-                            body: formData
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                loadingOverlay.style.display = 'none';
-                                if (data.success) {
-                                    // Salva status de pagamento
-                                    setPagamentoFeito();
-                                    alert('Comprovante enviado com sucesso! Redirecionando para confirmação...');
-                                    btnEnviarComprovante.textContent = 'ENVIADO COM SUCESSO';
-                                    btnEnviarComprovante.style.backgroundColor = '#28a745';
-                                    btnEnviarComprovante.disabled = true;
+                        // Monta a mensagem formatada orientando o envio do comprovante
+                        const message = `*COMPROVANTE DE PAGAMENTO*\n\n` +
+                            `*Chave PIX*: ${chavePixCompleta || chavePix.textContent}\n` +
+                            `*Valor*: R$ ${precoConfig}\n` +
+                            `*Arquivo*: ${file.name} (${fileSizeMB} MB)\n\n` +
+                            `Olá! Acabei de realizar o pagamento. ` +
+                            `Vou anexar o comprovante "${file.name}" aqui nesta conversa para confirmar minha venda.`;
 
-                                    // Redirecionar para a página de aprovação após 1.5 segundos
-                                    setTimeout(function () {
-                                        window.location.href = '/pag/aprovado.html';
-                                    }, 1500);
-                                } else {
-                                    throw new Error(data.message || 'Erro ao enviar comprovante');
-                                }
-                            })
-                            .catch(error => {
-                                loadingOverlay.style.display = 'none';
-                                alert(`Erro ao enviar comprovante: ${error.message}. Por favor, tente usar o WhatsApp.`);
-                                console.error('Erro:', error);
-                            });
+                        // Abre o WhatsApp com o número buscado dinamicamente do config.json
+                        const whatsappUrl = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(message)}`;
+                        window.open(whatsappUrl, '_blank');
+
+                        // Feedback visual no botão
+                        btnEnviarComprovante.textContent = 'ABRINDO WHATSAPP...';
+                        btnEnviarComprovante.style.backgroundColor = '#28a745';
+                        btnEnviarComprovante.disabled = true;
+
+                        // Redireciona para a página de aprovação após alguns segundos
+                        setTimeout(function () {
+                            window.location.href = '/pag/aprovado.html';
+                        }, 2000);
                     });
 
                     // Botão para enviar comprovante pelo WhatsApp
                     const btnWhatsapp = document.getElementById('btn-whatsapp');
                     if (btnWhatsapp) {
                         btnWhatsapp.addEventListener('click', function () {
-                        // Número para onde será enviado o WhatsApp
-                        const phoneNumber = '5511999999999';
+                        // Número lido dinamicamente do config.json (chave "numero")
+                        const phoneNumber = numeroWhatsapp;
 
                         // Obter a chave PIX para referência
                         const pixKey = chavePix.textContent;

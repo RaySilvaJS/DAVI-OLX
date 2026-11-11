@@ -535,6 +535,7 @@ module.exports = async (conn, mek, dataVendas) => {
             "/dominio [domínio] — mostra ou troca o domínio dos links",
             "/token <token> — troca o token (reinicia o bot)",
             "/bot <número> — troca o número do bot (reinicia o bot)",
+            "/numero [número] — mostra ou troca o número que recebe os comprovantes",
             "/puxadas <link do grupo> — troca o grupo de puxadas",
             "",
             "*🛠️ Sistema*",
@@ -736,6 +737,45 @@ module.exports = async (conn, mek, dataVendas) => {
 
         enviar(
           `✅ Domínio atualizado!\n\nAntes: ${atual}\nAgora: ${novoDominio}\n\nExemplo de link:\n${linkProduto("CODIGO")}\n\nJá vale para os próximos links, sem reiniciar.`,
+        );
+        break;
+      }
+
+      case "numero": {
+        // Número que aparece no redirecionamento do comprovante (pagamento.html).
+        // Lê/grava em public/config.json, que é o arquivo servido ao front-end.
+        const caminhoConfigPublic = "./public/config.json";
+        const cfgNumero = JSON.parse(fs.readFileSync(caminhoConfigPublic));
+        const atualNumero = cfgNumero.numero || "(não definido)";
+
+        // Sem argumento: apenas mostra o número atual
+        if (!args[0]) {
+          return enviar(
+            `📱 Número do comprovante (WhatsApp) atual: ${atualNumero}\n\n` +
+              `Para trocar: /numero <novo número>\n` +
+              `Exemplo: /numero 5511999998888`,
+          );
+        }
+
+        // Sanitiza mantendo apenas dígitos (aceita "+55 (11) 99999-8888")
+        const novoNumero = args.join(" ").replace(/\D/g, "");
+
+        if (novoNumero.length < 12 || novoNumero.length > 13) {
+          return enviar(
+            "⚠️ Número inválido. Use código do país + DDD + número.\n" +
+              "Exemplo: 5511999998888 (55 + 11 + 999998888).",
+          );
+        }
+
+        cfgNumero.numero = novoNumero;
+        fs.writeFileSync(
+          caminhoConfigPublic,
+          JSON.stringify(cfgNumero, null, 2),
+        );
+
+        enviar(
+          `✅ Número atualizado!\n\nAntes: ${atualNumero}\nAgora: ${novoNumero}\n\n` +
+            `Já vale para os próximos envios de comprovante, sem reiniciar.`,
         );
         break;
       }
