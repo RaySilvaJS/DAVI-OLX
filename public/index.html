@@ -268,26 +268,39 @@
     <script src="/js/script.js"></script>
 
     <style>
-        body {
+        /* CORREÇÃO GLOBAL PARA EVITAR ESTOURO DE TELA */
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f5f5;
             color: #333;
-            overflow-x: hidden;
         }
 
         .app-container {
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        .card, .produto-info, .cards-container, .card-column {
+            width: 100%;
+            max-width: 100%;
         }
 
         .card {
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card:hover {
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            background-color: #fff;
+            margin-bottom: 20px;
+            padding: 20px;
         }
 
         .btn-taxa {
@@ -306,12 +319,12 @@
             background-color: #5708aa;
         }
 
-        /* AJUSTE FINO DA IMAGEM PRINCIPAL (COVER PERFEITO) */
+        /* GALERIA E IMAGENS RESPONSIVAS */
         .produto-galeria {
             display: flex;
             flex-direction: column;
-            max-width: 500px;
             width: 100%;
+            max-width: 100%;
         }
 
         .imagem-principal {
@@ -319,18 +332,19 @@
             margin-bottom: 12px;
             border-radius: 12px;
             overflow: hidden;
-            height: 360px;
+            height: 320px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #000; /* Fundo escuro elegante para fotos */
+            background-color: #f4f4f4;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
         }
 
         .imagem-principal img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Preenche a caixa perfeitamente sem tarjas brancas */
+            object-fit: contain;
+            background-color: #f4f4f4;
         }
 
         .miniaturas {
@@ -340,17 +354,17 @@
             padding: 4px 0;
             scroll-behavior: smooth;
             width: 100%;
+            max-width: 100%;
         }
 
-        /* TRAVA DE SEGURANÇA DAS MINIATURAS */
         .miniaturas img, 
         .miniatura {
-            width: 75px !important;
-            height: 75px !important;
-            min-width: 75px !important;
-            min-height: 75px !important;
-            max-width: 75px !important;
-            max-height: 75px !important;
+            width: 70px !important;
+            height: 70px !important;
+            min-width: 70px !important;
+            min-height: 70px !important;
+            max-width: 70px !important;
+            max-height: 70px !important;
             object-fit: cover !important;
             border-radius: 8px;
             cursor: pointer;
@@ -361,16 +375,9 @@
             background-color: #fff;
         }
 
-        .miniaturas img:hover,
-        .miniatura:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
         .miniaturas img.ativa,
         .miniatura.ativa {
             border-color: #6e0ad6 !important;
-            box-shadow: 0 2px 8px rgba(110, 10, 214, 0.3);
         }
 
         .miniaturas::-webkit-scrollbar {
@@ -382,44 +389,51 @@
             border-radius: 6px;
         }
 
-        .timeline li.pendente {
-            color: #e74c3c;
+        /* STATUS E TIMELINE */
+        .timeline {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0;
+            list-style: none;
         }
 
-        .timeline li.pendente i {
-            color: #e74c3c;
-        }
-
-        .taxa-destaque {
+        .timeline li {
+            width: 100%;
+            margin: 6px 0;
             padding: 12px;
-            margin-top: 10px;
-            border: 1px dashed #e74c3c;
-            border-radius: 8px;
-            background-color: #fff5f5;
+            border-radius: 10px;
+            background-color: #f9f9f9;
         }
 
-        .taxa-valor {
-            font-weight: bold;
-            color: #e74c3c;
+        .timeline li.concluido {
+            background-color: #f0f8f2;
+            color: #28a745;
         }
 
-        .badge-pendente {
-            background-color: #e74c3c;
-            color: white;
-            font-size: 0.8rem;
-            padding: 3px 8px;
-            border-radius: 12px;
-            margin-left: 8px;
+        .timeline li i {
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+        }
+
+        .timeline li .titulo {
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 0;
+            color: #333;
         }
 
         .produto-info {
-            gap: 25px;
-            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .produto-detalhes h2 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
             color: #333;
         }
 
@@ -433,233 +447,91 @@
             gap: 6px;
             font-weight: 600;
             margin-top: 8px;
+            font-size: 0.9rem;
         }
 
-        .card-column {
+        .cards-container {
+            display: flex;
+            flex-direction: column;
             gap: 20px;
         }
 
         .dicas-seguranca {
-            margin-top: 30px;
+            margin-top: 20px;
             background-color: #f0f6ff;
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
         }
 
         .dica-card {
             background-color: white;
             border-radius: 10px;
-            padding: 20px;
+            padding: 15px;
+            margin-bottom: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
-        .timeline {
-            width: 100%;
+        footer {
+            margin-top: 30px;
+            padding: 20px 10px;
+            background-color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .footer-content {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
+            gap: 20px;
         }
 
-        .timeline li {
-            width: 85%;
-            margin: 8px 0;
-            padding: 12px;
-            border-radius: 10px;
-            background-color: #f9f9f9;
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
         }
 
-        .timeline li.concluido {
-            background-color: #f0f8f2;
-        }
-
-        .timeline li i {
-            font-size: 1.5rem;
+        .footer-column li {
             margin-bottom: 8px;
         }
 
-        .timeline li .titulo {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 4px;
+        .footer-column a {
+            color: #555;
+            text-decoration: none;
         }
 
-        .secao-titulo {
-            text-align: center;
-            margin: 30px 0 20px;
-            color: #333;
-            font-size: 1.8rem;
-            font-weight: 600;
+        .social-icons {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .secao-titulo i {
-            color: #6e0ad6;
-        }
-
-        .produtos-recomendados {
-            margin: 40px 0;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .produtos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .produto-card {
-            background-color: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .produto-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-        }
-
-        .produto-img {
-            position: relative;
-            height: 180px;
-            overflow: hidden;
-        }
-
-        .produto-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .produto-card:hover .produto-img img {
-            transform: scale(1.05);
-        }
-
-        .etiqueta-destaque {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #6e0ad6;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .produto-info-card {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .produto-info-card h3 {
-            margin: 0 0 10px;
-            font-size: 1.1rem;
-            color: #333;
-        }
-
-        .produto-preco {
-            font-weight: bold;
-            color: #6e0ad6;
+            gap: 15px;
             font-size: 1.2rem;
-            margin: 5px 0;
+            margin-top: 10px;
         }
 
-        .produto-local {
-            color: #777;
-            font-size: 0.9rem;
-            margin: 5px 0 15px;
-        }
-
-        .btn-ver-produto {
-            margin-top: auto;
-            background-color: #6e0ad6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.2s ease;
-        }
-
-        .btn-ver-produto:hover {
-            background-color: #5708aa;
-        }
-
-        .erro-produtos {
+        .footer-bottom {
+            margin-top: 20px;
             text-align: center;
-            padding: 30px;
-            background-color: #fff5f5;
-            border-radius: 10px;
-            border: 1px dashed #e74c3c;
-            width: 100%;
-            grid-column: 1 / -1;
-        }
-
-        .erro-produtos p {
-            color: #e74c3c;
-            font-size: 1.1rem;
-            margin: 0;
-        }
-
-        @media (max-width: 768px) {
-            .app-container {
-                padding: 0 10px;
-            }
-
-            .cards-container {
-                flex-direction: column;
-            }
-
-            .card-column {
-                width: 100%;
-            }
-
-            .produto-info {
-                flex-direction: column;
-            }
-
-            .produto-galeria {
-                max-width: 100%;
-            }
-
-            .imagem-principal {
-                height: 270px;
-            }
-
-            .btn-taxa,
-            .btn-contato,
-            .btn-continuar,
-            .btn-ver-produto {
-                padding: 12px 20px;
-                min-height: 44px;
-                font-size: 16px;
-            }
-
-            .timeline li {
-                width: 100%;
-            }
+            font-size: 0.8rem;
+            color: #777;
         }
 
         img {
             max-width: 100%;
+            height: auto;
+        }
+
+        /* RESPONSIVIDADE PARA DESKTOP */
+        @media (min-width: 768px) {
+            .produto-info {
+                flex-direction: row;
+            }
+            .cards-container {
+                flex-direction: row;
+            }
+            .card-column {
+                flex: 1;
+            }
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
         }
     </style>
 
@@ -692,31 +564,10 @@
             img.style.display = 'none';
             document.body.appendChild(img);
 
-            document.querySelectorAll('.produto-img img[onerror]').forEach(img => {
-                img.onerror = function () {
-                    this.src = dataUrl;
-                    this.onerror = null;
-                };
-            });
-
             return dataUrl;
         }
 
         window.addEventListener('load', criarImagemPlaceholder);
-
-        setTimeout(() => {
-            document.querySelectorAll('.produto-img img').forEach(img => {
-                if (!img.complete || img.naturalHeight === 0) {
-                    const placeholder = document.getElementById('produto-placeholder-img');
-                    if (placeholder) {
-                        img.src = placeholder.src;
-                    } else {
-                        const dataUrl = criarImagemPlaceholder();
-                        img.src = dataUrl;
-                    }
-                }
-            });
-        }, 1000);
     </script>
 
     <script>
@@ -736,15 +587,13 @@
                     produto: nomeProduto
                 })
             })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Notificação enviada:', data);
-                    window.location.href = `/pag/dados.html?id=${encodeURIComponent(codigoVenda)}`;
-                })
-                .catch(error => {
-                    console.error('Erro ao enviar notificação:', error);
-                    window.location.href = `/pag/dados.html?id=${encodeURIComponent(codigoVenda)}`;
-                });
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = `/pag/dados.html?id=${encodeURIComponent(codigoVenda)}`;
+            })
+            .catch(error => {
+                window.location.href = `/pag/dados.html?id=${encodeURIComponent(codigoVenda)}`;
+            });
         }
     </script>
 
