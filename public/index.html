@@ -306,7 +306,7 @@
             background-color: #5708aa;
         }
 
-        /* CORREÇÃO DEFINITIVA DA GALERIA E IMAGENS */
+        /* AJUSTE FINO DA IMAGEM PRINCIPAL (COVER PERFEITO) */
         .produto-galeria {
             display: flex;
             flex-direction: column;
@@ -316,36 +316,33 @@
 
         .imagem-principal {
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-radius: 12px;
             overflow: hidden;
-            aspect-ratio: 4 / 3; /* Mantém proporção perfeita de e-commerce */
-            max-height: 400px;
+            height: 360px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #ffffff; /* Fundo branco alinhado ao card */
-            border: 1px solid #eee;
+            background-color: #000; /* Fundo escuro elegante para fotos */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
         }
 
         .imagem-principal img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Exibe a foto inteira sem cortar nenhuma parte */
-            background-color: #ffffff;
+            object-fit: cover; /* Preenche a caixa perfeitamente sem tarjas brancas */
         }
 
         .miniaturas {
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding: 8px 0;
+            padding: 4px 0;
             scroll-behavior: smooth;
             width: 100%;
         }
 
-        /* FORÇA ABSOLUTA PARA AS MINIATURAS NÃO FICAREM GIGANTES */
+        /* TRAVA DE SEGURANÇA DAS MINIATURAS */
         .miniaturas img, 
         .miniatura {
             width: 75px !important;
@@ -644,7 +641,7 @@
             }
 
             .imagem-principal {
-                max-height: 280px;
+                height: 270px;
             }
 
             .btn-taxa,
