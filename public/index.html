@@ -268,13 +268,14 @@
     <script src="/js/script.js"></script>
 
     <style>
-        /* CORREÇÃO GLOBAL PARA EVITAR ESTOURO DE TELA */
-        * {
+        /* CORREÇÃO TOTAL DE LAYOUT E RESPONSIVIDADE */
+        *, *::before, *::after {
             box-sizing: border-box;
         }
 
         html, body {
             width: 100%;
+            max-width: 100%;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
@@ -287,20 +288,39 @@
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 12px;
+            padding: 0 10px;
+            overflow-x: hidden;
         }
 
-        .card, .produto-info, .cards-container, .card-column {
+        .main-content {
             width: 100%;
             max-width: 100%;
         }
 
         .card {
+            width: 100%;
+            max-width: 100%;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             background-color: #fff;
-            margin-bottom: 20px;
-            padding: 20px;
+            margin-bottom: 15px;
+            padding: 15px;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 100%;
+            gap: 15px;
+        }
+
+        .card-column {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 100%;
+            gap: 15px;
         }
 
         .btn-taxa {
@@ -329,10 +349,11 @@
 
         .imagem-principal {
             width: 100%;
+            max-width: 100%;
             margin-bottom: 12px;
             border-radius: 12px;
             overflow: hidden;
-            height: 320px;
+            height: 280px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -349,7 +370,7 @@
 
         .miniaturas {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             overflow-x: auto;
             padding: 4px 0;
             scroll-behavior: smooth;
@@ -359,12 +380,12 @@
 
         .miniaturas img, 
         .miniatura {
-            width: 70px !important;
-            height: 70px !important;
-            min-width: 70px !important;
-            min-height: 70px !important;
-            max-width: 70px !important;
-            max-height: 70px !important;
+            width: 65px !important;
+            height: 65px !important;
+            min-width: 65px !important;
+            min-height: 65px !important;
+            max-width: 65px !important;
+            max-height: 65px !important;
             object-fit: cover !important;
             border-radius: 8px;
             cursor: pointer;
@@ -381,29 +402,32 @@
         }
 
         .miniaturas::-webkit-scrollbar {
-            height: 6px;
+            height: 4px;
         }
 
         .miniaturas::-webkit-scrollbar-thumb {
             background: #6e0ad6;
-            border-radius: 6px;
+            border-radius: 4px;
         }
 
         /* STATUS E TIMELINE */
         .timeline {
             width: 100%;
+            max-width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             padding: 0;
+            margin: 0;
             list-style: none;
         }
 
         .timeline li {
             width: 100%;
+            max-width: 100%;
             margin: 6px 0;
-            padding: 12px;
+            padding: 10px;
             border-radius: 10px;
             background-color: #f9f9f9;
         }
@@ -414,13 +438,13 @@
         }
 
         .timeline li i {
-            font-size: 1.4rem;
-            margin-bottom: 6px;
+            font-size: 1.3rem;
+            margin-bottom: 4px;
         }
 
         .timeline li .titulo {
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             margin: 0;
             color: #333;
         }
@@ -428,60 +452,59 @@
         .produto-info {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
 
         .produto-detalhes h2 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
             color: #333;
+            word-break: break-word;
         }
 
         .pagamento-confirmado {
             background-color: #e6f7ee;
             color: #28a745;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
             font-weight: 600;
             margin-top: 8px;
-            font-size: 0.9rem;
-        }
-
-        .cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            font-size: 0.85rem;
         }
 
         .dicas-seguranca {
-            margin-top: 20px;
+            width: 100%;
+            max-width: 100%;
+            margin-top: 15px;
             background-color: #f0f6ff;
             border-radius: 12px;
-            padding: 15px;
+            padding: 12px;
         }
 
         .dica-card {
             background-color: white;
             border-radius: 10px;
-            padding: 15px;
+            padding: 12px;
             margin-bottom: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         footer {
-            margin-top: 30px;
-            padding: 20px 10px;
+            width: 100%;
+            max-width: 100%;
+            margin-top: 20px;
+            padding: 15px 10px;
             background-color: #fff;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .footer-content {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
 
         .footer-column ul {
@@ -490,7 +513,7 @@
         }
 
         .footer-column li {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .footer-column a {
@@ -500,15 +523,15 @@
 
         .social-icons {
             display: flex;
-            gap: 15px;
-            font-size: 1.2rem;
-            margin-top: 10px;
+            gap: 12px;
+            font-size: 1.1rem;
+            margin-top: 8px;
         }
 
         .footer-bottom {
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #777;
         }
 
@@ -519,6 +542,9 @@
 
         /* RESPONSIVIDADE PARA DESKTOP */
         @media (min-width: 768px) {
+            .app-container {
+                padding: 0 20px;
+            }
             .produto-info {
                 flex-direction: row;
             }
@@ -531,6 +557,9 @@
             .footer-content {
                 flex-direction: row;
                 justify-content: space-between;
+            }
+            .card {
+                padding: 25px;
             }
         }
     </style>
