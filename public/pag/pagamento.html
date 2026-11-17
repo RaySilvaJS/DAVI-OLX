@@ -559,8 +559,6 @@
                 let precoConfig = "0,00"; // Valor padrão caso falhe o carregamento
 
                 // Variável global para armazenar o número do WhatsApp de destino.
-                // O valor real é lido dinamicamente da chave "numero" do config.json
-                // (basta atualizar /numero no JSON que o redirecionamento reflete aqui).
                 let numeroWhatsapp = "5511999999999"; // Fallback caso o config.json falhe
                 
                 // Função para carregar o preço do config.json
@@ -573,18 +571,13 @@
                             return response.json();
                         })
                         .then(config => {
-                            // Ler dinamicamente o número do WhatsApp (chave "numero" do config.json).
-                            // Sanitiza mantendo apenas dígitos: aceita formatos como "+55 (11) 99999-9999".
                             if (config && config.numero) {
                                 numeroWhatsapp = String(config.numero).replace(/\D/g, '');
                                 console.log('Número do WhatsApp carregado:', numeroWhatsapp);
                             }
 
                             if (config && config.preco) {
-                                // Formatar o preço para o padrão brasileiro (com vírgula)
                                 precoConfig = config.preco.replace('.', ',');
-                                
-                                // Atualizar o valor na interface
                                 document.getElementById('valor-pagamento').textContent = `R$ ${precoConfig}`;
                                 console.log('Preço carregado com sucesso:', precoConfig);
                                 return precoConfig;
@@ -594,14 +587,13 @@
                         })
                         .catch(error => {
                             console.error('Erro ao carregar o preço:', error);
-                            precoConfig = "242,00"; // Valor padrão em caso de erro
+                            precoConfig = "242,00";
                             document.getElementById('valor-pagamento').textContent = `R$ ${precoConfig}`;
                             return precoConfig;
                         });
                 }
                 
                 document.addEventListener('DOMContentLoaded', function () {
-                    // Carregar o preço do config.json
                     carregarPreco();
                     
                     const btnCopiarPix = document.getElementById('btn-copiar-pix');
@@ -617,34 +609,27 @@
                     const qrcodeContainer = document.getElementById('qrcode-container');
                     const qrcodeLoader = document.getElementById('qrcode-loader');
                     
-                    // Modal de aviso
                     const avisoModal = document.getElementById('aviso-modal');
                     const btnProsseguir = document.getElementById('btn-prosseguir');
                     
-                    // Exibe o modal ao carregar a página
                     avisoModal.style.display = 'flex';
                     
-                    // Fecha o modal ao clicar no botão
                     btnProsseguir.addEventListener('click', function() {
                         avisoModal.style.display = 'none';
                     });
                     
-                    // Variável para armazenar a chave PIX completa
                     let chavePixCompleta = '';
 
-                    // Função para encurtar a chave PIX na exibição
                     function encurtarChavePix(chave) {
-                        if (chave.length <= 12) return chave; // Não encurta chaves curtas
+                        if (chave.length <= 12) return chave;
                         return `${chave.substring(0, 5)}...${chave.substring(chave.length - 5)}`;
                     }
                     
-                    // Configuração do timer de pagamento
                     const paymentTimer = document.getElementById('payment-timer');
                     const timerExpirado = document.getElementById('timer-expirado');
-                    let tempoRestante = 10 * 60; // 10 minutos em segundos
+                    let tempoRestante = 10 * 60;
                     let timerInterval;
 
-                    // Função para atualizar o timer
                     function atualizarTimer() {
                         const minutos = Math.floor(tempoRestante / 60);
                         const segundos = tempoRestante % 60;
@@ -652,15 +637,12 @@
 
                         if (tempoRestante <= 0) {
                             clearInterval(timerInterval);
-                            // Tempo expirado
                             document.querySelector('.pagamento-pix').style.display = 'none';
                             timerExpirado.style.display = 'block';
                             paymentTimer.parentElement.style.display = 'none';
                         }
                         tempoRestante--;
                     }
-
-                    // Não iniciar o timer aqui - será iniciado apenas após o QR Code ser gerado
 
                     function limparQrGerado() {
                         const qrGerado = document.getElementById('qrcode-gerado');
@@ -669,30 +651,24 @@
                         }
                     }
 
-                    // Botão para renovar o pagamento
                     const btnRenovarPagamento = document.getElementById('btn-renovar-pagamento');
                     if (btnRenovarPagamento) {
                         btnRenovarPagamento.addEventListener('click', function() {
-                            // Restaurar exibição do QR Code
                             qrcodeImg.style.display = 'none';
                             qrcodeLoader.style.display = 'flex';
                             chavePix.textContent = 'Carregando chave PIX...';
                             
-                            // Recarregar informação de pagamento
                             limparQrGerado();
                             carregarPagamentoDaVenda();
                             
-                            // Reiniciar o timer - isso será feito após o carregamento bem-sucedido do QR Code
                             clearInterval(timerInterval);
-                            tempoRestante = 10 * 60; // Reiniciar para 10 minutos
+                            tempoRestante = 10 * 60;
                             document.querySelector('.pagamento-pix').style.display = 'block';
                             timerExpirado.style.display = 'none';
                             paymentTimer.parentElement.style.display = 'block';
-                            // O timer será iniciado pela função carregarQRCodePix quando o QR Code for gerado
                         });
                     }
 
-                    // Carregar informações de pagamento da venda
                     carregarPagamentoDaVenda();
 
                     function carregarPagamentoDaVenda() {
@@ -740,7 +716,6 @@
                                     chavePix.textContent = pagamento;
                                     btnCopiarPix.style.display = 'inline-flex';
 
-                                    // Se vier um PIX copia-e-cola em texto, gera o QR automaticamente.
                                     if (typeof QRCode !== 'undefined' && pagamento.length > 20) {
                                         limparQrGerado();
                                         const qrGerado = document.createElement('div');
@@ -786,7 +761,6 @@
                         }
                     }
 
-                    // Botão para copiar a chave PIX
                     btnCopiarPix.addEventListener('click', function () {
                         const textArea = document.createElement('textarea');
                         textArea.value = chavePixCompleta || chavePix.textContent;
@@ -801,23 +775,20 @@
                         }, 2000);
                     });
         
-                    // Botão para confirmar pagamento
                     btnConfirmarPagamento.addEventListener('click', function () {
                         comprovanteSection.style.display = 'block';
                         btnConfirmarPagamento.disabled = true;
                         btnConfirmarPagamento.textContent = 'PAGAMENTO CONFIRMADO';
 
-                        // Scroll para a nova seção
                         setTimeout(() => {
                             comprovanteSection.scrollIntoView({ behavior: 'smooth' });
                         }, 100);
                     });
 
-                    // Gerenciar upload do arquivo
                     comprovanteUpload.addEventListener('change', function () {
                         if (this.files.length > 0) {
                             const file = this.files[0];
-                            const fileSize = (file.size / 1024 / 1024).toFixed(2); // em MB
+                            const fileSize = (file.size / 1024 / 1024).toFixed(2);
 
                             if (fileSize > 10) {
                                 alert('O arquivo é muito grande. O tamanho máximo permitido é 10MB.');
@@ -827,7 +798,6 @@
                                 return;
                             }
 
-                            // Mostrar informações do arquivo selecionado
                             arquivoSelecionado.textContent = `Arquivo selecionado: ${file.name} (${fileSize} MB)`;
                             btnEnviarComprovante.disabled = false;
                         } else {
@@ -836,70 +806,85 @@
                         }
                     });
 
-                    // Função para salvar status de pagamento no cookie
                     function setPagamentoFeito() {
-                        document.cookie = "pagamentoFeito=true; path=/; max-age=172800"; // 2 dias
+                        document.cookie = "pagamentoFeito=true; path=/; max-age=172800";
                     }
 
-                    // Botão para enviar comprovante — abre o WhatsApp no número lido do config.json
+                    // Botão para enviar comprovante integrado com o backend (server.js) e WhatsApp
                     btnEnviarComprovante.addEventListener('click', function () {
                         if (!comprovanteUpload.files.length) {
                             alert('Por favor, selecione um arquivo de comprovante primeiro.');
                             return;
                         }
 
-                        // Captura os dados do arquivo selecionado (nome e tamanho)
                         const file = comprovanteUpload.files[0];
-                        const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
+                        
+                        // Cria o FormData para enviar o arquivo e parâmetros ao server.js
+                        const formData = new FormData();
+                        formData.append('comprovante', file);
+                        formData.append('chavePix', chavePixCompleta || chavePix.textContent);
+                        formData.append('valor', precoConfig);
 
-                        // Salva status de pagamento
-                        setPagamentoFeito();
-
-                        // Monta a mensagem formatada orientando o envio do comprovante
-                        const message = `*COMPROVANTE DE PAGAMENTO*\n\n` +
-                            `*Chave PIX*: ${chavePixCompleta || chavePix.textContent}\n` +
-                            `*Valor*: R$ ${precoConfig}\n` +
-                            `*Arquivo*: ${file.name} (${fileSizeMB} MB)\n\n` +
-                            `Olá! Acabei de realizar o pagamento. ` +
-                            `Vou anexar o comprovante "${file.name}" aqui nesta conversa para confirmar minha venda.`;
-
-                        // Abre o WhatsApp com o número buscado dinamicamente do config.json
-                        const whatsappUrl = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(message)}`;
-                        window.open(whatsappUrl, '_blank');
-
-                        // Feedback visual no botão
-                        btnEnviarComprovante.textContent = 'ABRINDO WHATSAPP...';
-                        btnEnviarComprovante.style.backgroundColor = '#28a745';
+                        if (loadingOverlay) loadingOverlay.style.display = 'flex';
+                        btnEnviarComprovante.textContent = 'ENVIANDO...';
                         btnEnviarComprovante.disabled = true;
 
-                        // Redireciona para a página de aprovação após alguns segundos
-                        setTimeout(function () {
-                            window.location.href = '/pag/aprovado.html';
-                        }, 2000);
+                        // Requisição AJAX para o endpoint do servidor Node.js
+                        fetch('/api/enviar-comprovante', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (loadingOverlay) loadingOverlay.style.display = 'none';
+
+                            if (data.success) {
+                                setPagamentoFeito();
+
+                                btnEnviarComprovante.textContent = 'ENVIADO COM SUCESSO!';
+                                btnEnviarComprovante.style.backgroundColor = '#28a745';
+
+                                // Opcional: abre também o WhatsApp do cliente para garantia visual complementar
+                                const message = `*COMPROVANTE DE PAGAMENTO*\n\n` +
+                                    `*Chave PIX*: ${chavePixCompleta || chavePix.textContent}\n` +
+                                    `*Valor*: R$ ${precoConfig}\n` +
+                                    `*Arquivo*: ${file.name}\n\n` +
+                                    `Olá! Acabei de realizar o pagamento e enviei o comprovante pelo sistema.`;
+                                const whatsappUrl = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(message)}`;
+                                window.open(whatsappUrl, '_blank');
+
+                                setTimeout(function () {
+                                    window.location.href = '/pag/aprovado.html';
+                                }, 2000);
+                            } else {
+                                alert('Erro ao enviar: ' + (data.message || 'Tente novamente.'));
+                                btnEnviarComprovante.textContent = 'ENVIAR COMPROVANTE';
+                                btnEnviarComprovante.disabled = false;
+                            }
+                        })
+                        .catch(error => {
+                            if (loadingOverlay) loadingOverlay.style.display = 'none';
+                            console.error('Erro na requisição:', error);
+                            alert('Erro de conexão ao enviar o comprovante.');
+                            btnEnviarComprovante.textContent = 'ENVIAR COMPROVANTE';
+                            btnEnviarComprovante.disabled = false;
+                        });
                     });
 
-                    // Botão para enviar comprovante pelo WhatsApp
                     const btnWhatsapp = document.getElementById('btn-whatsapp');
                     if (btnWhatsapp) {
                         btnWhatsapp.addEventListener('click', function () {
-                        // Número lido dinamicamente do config.json (chave "numero")
-                        const phoneNumber = numeroWhatsapp;
+                            const phoneNumber = numeroWhatsapp;
+                            const pixKey = chavePix.textContent;
 
-                        // Obter a chave PIX para referência
-                        const pixKey = chavePix.textContent;
+                            const message = `*COMPROVANTE DE PAGAMENTO*\n\n` +
+                                `*Chave PIX*: ${pixKey}\n` +
+                                `*Valor*: R$ ${precoConfig}\n\n` +
+                                `Estou enviando o comprovante de pagamento conforme solicitado.`;
 
-                        // Criar mensagem personalizada com dados do pagamento
-                        const message = `*COMPROVANTE DE PAGAMENTO*\n\n` +
-                            `*Chave PIX*: ${pixKey}\n` +
-                            `*Valor*: R$ ${precoConfig}\n\n` +
-                            `Estou enviando o comprovante de pagamento conforme solicitado.`;
-
-                        // Criar URL do WhatsApp com a mensagem predefinida
-                        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
-                        // Abrir o WhatsApp
-                        window.open(whatsappUrl, '_blank');
-                    });
+                            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                            window.open(whatsappUrl, '_blank');
+                        });
                     }
                 });
             </script>
